@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View, TextInput, Button, Image, TouchableOpacity, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { registerRootComponent } from "expo";
 
 const SignUpScreen = () => {
     const [email, setEmail] = useState("");
@@ -39,6 +40,26 @@ const SignUpScreen = () => {
     };
 
     const handleSubmit = () => {
+        ///validate inputs
+        ///validate inputs
+        if (!email || !password) {
+            alert("Email and password are required.");
+            return;
+        }
+        ///if email is not a valid email address
+        if (!email.includes("@") || !email.includes(".")) {
+            alert("Email must be a valid email address.");
+            return;
+        }
+        if (password.length < 4) {
+            alert("Password must be at least 4 characters.");
+            return;
+        }
+        ///if nickname is not a valid nickname
+        if (nickname.length < 2) {
+            alert("Nickname must be at least 2 characters.");
+            return;
+        }
         console.log("Email:", email);
         console.log("Password:", password);
         console.log("Nickname:", nickname);
