@@ -8,8 +8,8 @@ export default function HomeScreen({ navigation }) {
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require("../assets/background.jpg")} style={styles.container}>
                 <Text style={styles.header}>Welcome To </Text>
-                <Text style={styles.header}>Donk Bet App</Text>
                 <Image source={require("../assets/donklogo.webp")} style={styles.image} />
+                <Text style={styles.header}>Donk Bet App</Text>
                 <View>
                     <AppButton
                         color={colors.green}
@@ -23,6 +23,7 @@ export default function HomeScreen({ navigation }) {
                         text="Create an account"
                         onPress={() => navigation.navigate("SignUp")}
                     />
+                    <AppButton color={colors.primary} width="90%" text="Take A Tour" onPress={console.log("about")} />
                 </View>
             </ImageBackground>
         </SafeAreaView>
@@ -38,14 +39,12 @@ const styles = StyleSheet.create({
         fontSize: 30,
         color: "#fff",
         textAlign: "center",
+        marginBottom: 20,
     },
     image: {
         width: 200,
         height: 200,
-        marginBottom: 40,
-        marginTop: 40,
         alignSelf: "center",
         borderRadius: 100,
-        // resizeMode: "contain",
     },
 });

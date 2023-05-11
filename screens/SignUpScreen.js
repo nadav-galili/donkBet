@@ -4,6 +4,7 @@ import { colors } from "../colors";
 import AppButton from "../components/AppButton";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
+import { SERVER_URL } from "../config";
 
 const SignUpScreen = () => {
     const [email, setEmail] = useState("");
@@ -11,21 +12,6 @@ const SignUpScreen = () => {
     const [nickname, setNickname] = useState("");
     const [image, setImage] = useState(null);
 
-    const SERVER_URL = "http://localhost:3000";
-
-    const createFormData = (photo, body = {}) => {
-        let data = new FormData();
-        const type = photo.split(".")[1];
-        const name = photo.split("/").pop();
-        const file = {
-            photo,
-            type: "image/jpeg",
-            name,
-        };
-        data.append("photo", file);
-
-        return data;
-    };
     const handleImagePicker = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
@@ -42,42 +28,31 @@ const SignUpScreen = () => {
 
         if (!result.canceled) {
             const assets = result.assets;
-
             const uri = assets[0].uri;
             setImage(uri);
-            // const type = uri.split(".")[1];
-            // const name = uri.split("/").pop();
-            // const file = {
-            //     uri,
-            //     type: "image/jpeg",
-            //     name,
-            // };
-
-            // console.log("🚀 ~ file: SignUpScreen.js:33 ~ handleImagePicker ~ file:", file);
         }
     };
 
     const handleSubmit = async () => {
         ///validate inputs
-        ///validate inputs
-        // if (!email || !password) {
-        //     alert("Email and password are required.");
-        //     return;
-        // }
-        // ///if email is not a valid email address
-        // if (!email.includes("@") || !email.includes(".")) {
-        //     alert("Email must be a valid email address.");
-        //     return;
-        // }
-        // if (password.length < 4) {
-        //     alert("Password must be at least 4 characters.");
-        //     return;
-        // }
-        // ///if nickname is not a valid nickname
-        // if (nickname && nickname.length < 2) {
-        //     alert("Nickname must be at least 2 characters.");
-        //     return;
-        // }
+        if (!email || !password) {
+            alert("Email and password are required.");
+            return;
+        }
+        ///if email is not a valid email address
+        if (!email.includes("@") || !email.includes(".")) {
+            alert("Email must be a valid email address.");
+            return;
+        }
+        if (password.length < 4) {
+            alert("Password must be at least 4 characters.");
+            return;
+        }
+        ///if nickname is not a valid nickname
+        if (!nickname || nickname.length < 2) {
+            alert("Nickname must be at least 2 characters.");
+            return;
+        }
         ///if image is not a valid image
         if (image && !image.includes("file://")) {
             alert("Image must be a valid image.");
@@ -86,69 +61,35 @@ const SignUpScreen = () => {
 
         ///if all inputs are valid
         ///send a request to the server
-        if (!image) {
-            setImage("anonymous.webp");
-        }
+        // if (!image) {
+        //     setImage("anonymous.webp");
+        // }
 
         const formData = new FormData();
-        formData.append("image", {
-            name: new Date().getTime() + ".jpg",
-            uri: image,
-            type: "image/jpeg",
-        });
+        if (image) {
+            formData.append("image", {
+                name: `${nickname}.jpg`,
+                uri: image,
+                type: "image/jpeg",
+            });
+        }
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("nickname", nickname);
+
         try {
             var config = {
                 method: "post",
-                url: "http://192.168.1.64:3030/api/users",
+                url: `${SERVER_URL}/api/users/signup`,
                 headers: { Accept: "application/json, text/plain, /", "Content-Type": "multipart/form-data" },
                 data: formData,
             };
-            console.log("🚀 ~ file: SignUpScreen.js:100 ~ handleSubmit ~ formData", formData);
+            console.log("🚀 ~ file: SignUpScreen.js:88 ~ handleSubmit ~ confi");
             const res = await axios(config);
-            // const res = await axios.post(`http://192.168.1.64:3030/api/users`, formData, {
-            //     Headers: {
-            //         Accept: "application/json",
-            //         "Content-Type": "multipart/form-data",
-            //     },
-            //     body: formData,
-            // });
-            console.log("🚀 ~ file: SignUpScreen.js:100 ~ handleSubmit ~ res", res.data);
+            console.log("🚀 ~ file: SignUpScreen.js:88 ~ handleSubmit ~ res", res.data);
         } catch (error) {
-            console.log("🚀 ~ file: SignUpScreen.js:100 ~ handleSubmit ~ error", error);
+            console.log("🚀 ~ file: SignUpScreen.js90 ~ handleSubmit ~ error", error);
         }
-
-        // console.log(";;;d", createFormData(image, { email, password, nickname }));
-        // try {
-        //     const response = await fetch(`http://192.168.1.64:3030/api/users`, {
-        //         method: "POST",
-        //         body: createFormData(image, { email, password, nickname }),
-        //     });
-        //     const data = await response.json();
-        //     console.log(data);
-        // } catch (error) {
-        //     console.error("ll", error);
-        // }
-
-        // const response = await fetch(`http://192.168.1.64:3030/api/users`, {
-        //     method: "POST",
-        //     body: createFormData(image, { email, password, nickname }),
-        // });
-
-        // const result = await response.json();
-        // console.log("result", result);
-        // let data = new FormData();
-        // data.append("email", email);
-        // data.append("password", password);
-        // data.append("nickname", nickname ? nickname : "Anonymous");
-        // data.append("image", {
-        //     uri: image,
-        //     type: "image/jpeg",
-        //     name: "image.jpg",
-        // });
-        // fetch("http://localhost:3000/api/users", {
-        //     method: "POST",
-        //     body: data,
-        // });
     };
 
     return (
@@ -158,15 +99,15 @@ const SignUpScreen = () => {
                     <Text style={styles.title}>Create A New Account</Text>
                     <View style={styles.form}>
                         {image && <Image source={{ uri: image }} style={styles.image} />}
-                        {/* <TextInput
-                            placeholder="Enter your email address"
+                        <TextInput
+                            placeholder="Enter your Email"
                             value={email}
                             onChangeText={setEmail}
                             style={styles.input}
                         />
 
                         <TextInput
-                            placeholder="Enter your password"
+                            placeholder="Enter your Password"
                             value={password}
                             onChangeText={setPassword}
                             secureTextEntry={true}
@@ -174,15 +115,15 @@ const SignUpScreen = () => {
                         />
 
                         <TextInput
-                            placeholder="Enter your nickname"
+                            placeholder="Enter your User Name"
                             value={nickname}
                             onChangeText={setNickname}
                             style={styles.input}
                         />
-                        <Text>you can do change your nick name later</Text> */}
+                        <Text style={styles.comment}>you can do change your nick name later</Text>
                     </View>
                     <AppButton color={colors.green} width="80%" text="Upload Image" onPress={handleImagePicker} />
-                    <Text>you can upload/edit your image later</Text>
+                    <Text style={styles.comment}>you can upload/edit your image later</Text>
                     <AppButton color={colors.blue} width="80%" text="Sign Up" onPress={handleSubmit} />
                 </View>
             </ImageBackground>
@@ -194,6 +135,9 @@ const styles = StyleSheet.create({
     container: {
         alignItems: "center",
         justifyContent: "center",
+    },
+    comment: {
+        fontSize: 12,
     },
     ImageBack: {
         flex: 1,
