@@ -5,6 +5,7 @@ import AppButton from "../components/AppButton";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import { SERVER_URL } from "../config";
+import userService from "../services/userService";
 
 const SignUpScreen = () => {
     const [email, setEmail] = useState("");
@@ -59,12 +60,6 @@ const SignUpScreen = () => {
             return;
         }
 
-        ///if all inputs are valid
-        ///send a request to the server
-        // if (!image) {
-        //     setImage("anonymous.webp");
-        // }
-
         const formData = new FormData();
         if (image) {
             formData.append("image", {
@@ -78,14 +73,7 @@ const SignUpScreen = () => {
         formData.append("nickname", nickname);
 
         try {
-            var config = {
-                method: "post",
-                url: `${SERVER_URL}/api/users/signup`,
-                headers: { Accept: "application/json, text/plain, /", "Content-Type": "multipart/form-data" },
-                data: formData,
-            };
-            console.log("🚀 ~ file: SignUpScreen.js:88 ~ handleSubmit ~ confi");
-            const res = await axios(config);
+            const res = await userService.signUp(formData);
             console.log("🚀 ~ file: SignUpScreen.js:88 ~ handleSubmit ~ res", res.data);
         } catch (error) {
             console.log("🚀 ~ file: SignUpScreen.js90 ~ handleSubmit ~ error", error);

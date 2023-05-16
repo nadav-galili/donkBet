@@ -7,9 +7,9 @@ export default function HomeScreen({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require("../assets/background.jpg")} style={styles.container}>
-                <Text style={styles.header}>Welcome To </Text>
-                <Image source={require("../assets/donklogo.webp")} style={styles.image} />
-                <Text style={styles.header}>Donk Bet App</Text>
+                {/* <Text style={styles.header}>Welcome To </Text> */}
+                <Image source={require("../assets/donkLogo2.webp")} style={styles.image} />
+                {/* <Text style={styles.header}>Donk Bet App</Text> */}
                 <View>
                     <AppButton
                         color={colors.green}
@@ -46,5 +46,6 @@ const styles = StyleSheet.create({
         height: 200,
         alignSelf: "center",
         borderRadius: 100,
+        marginBottom: 20,
     },
 });
