@@ -1,16 +1,23 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Image, Text, SafeAreaView, ImageBackground, Platform } from "react-native";
+import { StyleSheet, View, TextInput, Image, Text, SafeAreaView, ImageBackground } from "react-native";
 import { colors } from "../colors";
 import AppButton from "../components/AppButton";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import { SERVER_URL } from "../config";
 import userService from "../services/userService";
+import { Formik } from "formik";
+import * as Yup from "yup";
+
+// Define validation schema using Yup
+const SignUpSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email").required("Required"),
+    password: Yup.string().min(4, "Too Short!").required("Required"),
+    nickname: Yup.string().min(2, "Too Short!").required("Required"),
+    image: Yup.string().matches(/file:\/\//, "Must be a valid image"),
+});
 
 const SignUpScreen = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [nickname, setNickname] = useState("");
     const [image, setImage] = useState(null);
 
     const handleImagePicker = async () => {
@@ -34,31 +41,8 @@ const SignUpScreen = () => {
         }
     };
 
-    const handleSubmit = async () => {
-        ///validate inputs
-        if (!email || !password) {
-            alert("Email and password are required.");
-            return;
-        }
-        ///if email is not a valid email address
-        if (!email.includes("@") || !email.includes(".")) {
-            alert("Email must be a valid email address.");
-            return;
-        }
-        if (password.length < 4) {
-            alert("Password must be at least 4 characters.");
-            return;
-        }
-        ///if nickname is not a valid nickname
-        if (!nickname || nickname.length < 2) {
-            alert("Nickname must be at least 2 characters.");
-            return;
-        }
-        ///if image is not a valid image
-        if (image && !image.includes("file://")) {
-            alert("Image must be a valid image.");
-            return;
-        }
+    const handleSubmit = async (values) => {
+        const { email, password, nickname } = values;
 
         const formData = new FormData();
         if (image) {
@@ -85,31 +69,71 @@ const SignUpScreen = () => {
             <ImageBackground source={require("../assets/background.jpg")} style={styles.ImageBack}>
                 <View style={styles.container}>
                     <Text style={styles.title}>Create A New Account</Text>
-                    <View style={styles.form}>
-                        {image && <Image source={{ uri: image }} style={styles.image} />}
-                        <TextInput
-                            placeholder="Enter your Email"
-                            value={email}
-                            onChangeText={setEmail}
-                            style={styles.input}
-                        />
+                    <Formik
+                        initialValues={{ email: "", password: "", nickname: "", image: null }}
+                        validationSchema={SignUpSchema}
+                        onSubmit={handleSubmit}
+                    >
+                        {({
+                            handleChange,
+                            handleBlur,
+                            handleSubmit,
+                            values,
+                            errors,
+                            touched,
+                            validateField,
+                            setFieldTouched,
+                        }) => (
+                            <View style={styles.form}>
+                                {values.image && <Image source={{ uri: values.image }} style={styles.image} />}
+                                <TextInput
+                                    placeholder="Enter your Email"
+                                    onChangeText={handleChange("email")}
+                                    onBlur={() => {
+                                        handleBlur("email");
+                                        setFieldTouched("email");
+                                        validateField("email");
+                                    }}
+                                    value={values.email}
+                                    style={styles.input}
+                                />
+                                {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
-                        <TextInput
-                            placeholder="Enter your Password"
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry={true}
-                            style={styles.input}
-                        />
+                                <TextInput
+                                    placeholder="Enter your Password"
+                                    onChangeText={handleChange("password")}
+                                    onBlur={() => {
+                                        handleBlur("password");
+                                        setFieldTouched("password");
+                                        validateField("password");
+                                    }}
+                                    value={values.password}
+                                    secureTextEntry={true}
+                                    style={styles.input}
+                                />
+                                {touched.password && errors.password && (
+                                    <Text style={styles.error}>{errors.password}</Text>
+                                )}
 
-                        <TextInput
-                            placeholder="Enter your User Name"
-                            value={nickname}
-                            onChangeText={setNickname}
-                            style={styles.input}
-                        />
-                        <Text style={styles.comment}>you can do change your nick name later</Text>
-                    </View>
+                                <TextInput
+                                    placeholder="Enter your User Name"
+                                    onChangeText={handleChange("nickname")}
+                                    onBlur={() => {
+                                        handleBlur("nickname");
+                                        setFieldTouched("nickname");
+                                        validateField("nickname");
+                                    }}
+                                    value={values.nickname}
+                                    style={styles.input}
+                                />
+                                {touched.nickname && errors.nickname && (
+                                    <Text style={styles.error}>{errors.nickname}</Text>
+                                )}
+
+                                <Text style={styles.comment}>you can do change your nick name later</Text>
+                            </View>
+                        )}
+                    </Formik>
                     <AppButton color={colors.green} width="80%" text="Upload Image" onPress={handleImagePicker} />
                     <Text style={styles.comment}>you can upload/edit your image later</Text>
                     <AppButton color={colors.blue} width="80%" text="Sign Up" onPress={handleSubmit} />
@@ -197,6 +221,12 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 18,
         fontWeight: "bold",
+    },
+    error: {
+        color: "red",
+        fontSize: 12,
+        backgroundColor: "#fff",
+        margin: 5,
     },
 });
 
