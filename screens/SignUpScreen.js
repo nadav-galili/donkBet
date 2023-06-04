@@ -1,24 +1,23 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Image, Text, SafeAreaView, ImageBackground } from "react-native";
+import { StyleSheet, View, TextInput, Image, Text, SafeAreaView, ImageBackground, Platform } from "react-native";
 import { colors } from "../colors";
 import AppButton from "../components/AppButton";
 import * as ImagePicker from "expo-image-picker";
-import axios from "axios";
-import { SERVER_URL } from "../config";
 import userService from "../services/userService";
 import { Formik } from "formik";
 import * as Yup from "yup";
 
-// Define validation schema using Yup
-const SignUpSchema = Yup.object().shape({
-    email: Yup.string().email("Invalid email").required("Required"),
-    password: Yup.string().min(4, "Too Short!").required("Required"),
-    nickname: Yup.string().min(2, "Too Short!").required("Required"),
-    image: Yup.string().matches(/file:\/\//, "Must be a valid image"),
+const validationSchema = Yup.object().shape({
+    email: Yup.string().required().email().label("email"),
+    password: Yup.string().required().min(4).label("password"),
+    nickname: Yup.string().required().min(2).label("nickname"),
 });
 
 const SignUpScreen = () => {
     const [image, setImage] = useState(null);
+    const initialValues = { email: "", password: "", nickname: "" };
+    const [error, setError] = useState(null);
+    const [formikState, setFormikState] = useState(initialValues);
 
     const handleImagePicker = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -40,23 +39,19 @@ const SignUpScreen = () => {
             setImage(uri);
         }
     };
-
     const handleSubmit = async (values) => {
-        const { email, password, nickname } = values;
-
-        const formData = new FormData();
-        if (image) {
-            formData.append("image", {
-                name: `${nickname}.jpg`,
-                uri: image,
-                type: "image/jpeg",
-            });
-        }
-        formData.append("email", email);
-        formData.append("password", password);
-        formData.append("nickname", nickname);
-
         try {
+            const formData = new FormData();
+            if (image) {
+                formData.append("image", {
+                    name: `${values.nickname}.jpg`,
+                    uri: image,
+                    type: "image/jpeg",
+                });
+            }
+            formData.append("email", values.email);
+            formData.append("password", values.password);
+            formData.append("nickname", values.nickname);
             const res = await userService.signUp(formData);
             console.log("🚀 ~ file: SignUpScreen.js:88 ~ handleSubmit ~ res", res.data);
         } catch (error) {
@@ -69,74 +64,52 @@ const SignUpScreen = () => {
             <ImageBackground source={require("../assets/background.jpg")} style={styles.ImageBack}>
                 <View style={styles.container}>
                     <Text style={styles.title}>Create A New Account</Text>
-                    <Formik
-                        initialValues={{ email: "", password: "", nickname: "", image: null }}
-                        validationSchema={SignUpSchema}
-                        onSubmit={handleSubmit}
-                    >
-                        {({
-                            handleChange,
-                            handleBlur,
-                            handleSubmit,
-                            values,
-                            errors,
-                            touched,
-                            validateField,
-                            setFieldTouched,
-                        }) => (
-                            <View style={styles.form}>
-                                {values.image && <Image source={{ uri: values.image }} style={styles.image} />}
-                                <TextInput
-                                    placeholder="Enter your Email"
-                                    onChangeText={handleChange("email")}
-                                    onBlur={() => {
-                                        handleBlur("email");
-                                        setFieldTouched("email");
-                                        validateField("email");
-                                    }}
-                                    value={values.email}
-                                    style={styles.input}
-                                />
-                                {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
-
-                                <TextInput
-                                    placeholder="Enter your Password"
-                                    onChangeText={handleChange("password")}
-                                    onBlur={() => {
-                                        handleBlur("password");
-                                        setFieldTouched("password");
-                                        validateField("password");
-                                    }}
-                                    value={values.password}
-                                    secureTextEntry={true}
-                                    style={styles.input}
-                                />
-                                {touched.password && errors.password && (
-                                    <Text style={styles.error}>{errors.password}</Text>
-                                )}
-
-                                <TextInput
-                                    placeholder="Enter your User Name"
-                                    onChangeText={handleChange("nickname")}
-                                    onBlur={() => {
-                                        handleBlur("nickname");
-                                        setFieldTouched("nickname");
-                                        validateField("nickname");
-                                    }}
-                                    value={values.nickname}
-                                    style={styles.input}
-                                />
-                                {touched.nickname && errors.nickname && (
-                                    <Text style={styles.error}>{errors.nickname}</Text>
-                                )}
-
-                                <Text style={styles.comment}>you can do change your nick name later</Text>
-                            </View>
-                        )}
-                    </Formik>
+                    <View style={styles.form}>
+                        {image && <Image source={{ uri: image }} style={styles.image} />}
+                        <Formik initialValues={formikState} onSubmit={handleSubmit} validationSchema={validationSchema}>
+                            {({ handleChange, handleSubmit, errors, setFieldTouched, touched }) => (
+                                <>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Email"
+                                        onChangeText={handleChange("email")}
+                                        onBlur={() => setFieldTouched("email")}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                    />
+                                    {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Password"
+                                        onChangeText={handleChange("password")}
+                                        onBlur={() => setFieldTouched("password")}
+                                        secureTextEntry
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                    />
+                                    {touched.password && errors.password && (
+                                        <Text style={styles.error}>{errors.password}</Text>
+                                    )}
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Nickname"
+                                        onChangeText={handleChange("nickname")}
+                                        onBlur={() => setFieldTouched("nickname")}
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                    />
+                                    {touched.nickname && errors.nickname && (
+                                        <Text style={style.error}>{errors.nickname}</Text>
+                                    )}
+                                    <AppButton color={colors.green} width="80%" text="Sign Up" onPress={handleSubmit} />
+                                </>
+                            )}
+                        </Formik>
+                        <Text style={styles.comment}>you can do change your nick name later</Text>
+                    </View>
                     <AppButton color={colors.green} width="80%" text="Upload Image" onPress={handleImagePicker} />
                     <Text style={styles.comment}>you can upload/edit your image later</Text>
-                    <AppButton color={colors.blue} width="80%" text="Sign Up" onPress={handleSubmit} />
                 </View>
             </ImageBackground>
         </SafeAreaView>
@@ -150,6 +123,12 @@ const styles = StyleSheet.create({
     },
     comment: {
         fontSize: 12,
+    },
+    error: {
+        fontSize: 10,
+        color: "red",
+        backgroundColor: "#fff",
+        marginVertical: 10,
     },
     ImageBack: {
         flex: 1,
@@ -221,12 +200,6 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 18,
         fontWeight: "bold",
-    },
-    error: {
-        color: "red",
-        fontSize: 12,
-        backgroundColor: "#fff",
-        margin: 5,
     },
 });
 
