@@ -100,7 +100,7 @@ const SignUpScreen = () => {
                                         autoCorrect={false}
                                     />
                                     {touched.nickname && errors.nickname && (
-                                        <Text style={style.error}>{errors.nickname}</Text>
+                                        <Text style={styles.error}>{errors.nickname}</Text>
                                     )}
                                     <AppButton color={colors.green} width="80%" text="Sign Up" onPress={handleSubmit} />
                                 </>

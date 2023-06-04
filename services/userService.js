@@ -10,6 +10,7 @@ export async function signUp(formData) {
         data: formData,
     };
     const res = await axios(config);
+    return res;
 }
 
 export default {
