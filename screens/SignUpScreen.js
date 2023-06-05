@@ -12,7 +12,7 @@ const validationSchema = Yup.object().shape({
     nickname: Yup.string().required().min(2).label("nickname"),
 });
 
-const SignUpScreen = () => {
+const SignUpScreen = ({ navigation }) => {
     const [image, setImage] = useState(null);
     const initialValues = { email: "", password: "", nickname: "" };
     const [error, setError] = useState(null);
@@ -61,6 +61,7 @@ const SignUpScreen = () => {
             if (res.status === 200) {
                 alert("Sign Up Success");
                 //redirect to login
+                navigation.navigate("Login");
             } else {
                 alert("Sign Up Failed");
             }
