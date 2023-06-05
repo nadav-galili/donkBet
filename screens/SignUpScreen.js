@@ -8,7 +8,6 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
-    email: Yup.string().required().email().label("email"),
     password: Yup.string().required().min(4).label("password"),
     nickname: Yup.string().required().min(2).label("nickname"),
 });
@@ -49,12 +48,24 @@ const SignUpScreen = () => {
                     type: "image/jpeg",
                 });
             }
-            formData.append("email", values.email);
             formData.append("password", values.password);
-            formData.append("nickname", values.nickname);
+            formData.append("nickName", values.nickname);
             const res = await userService.signUp(formData);
             console.log("🚀 ~ file: SignUpScreen.js:88 ~ handleSubmit ~ res", res.data);
+            if (res.data.error) {
+                setError(res.data.error);
+                return;
+            }
+            setError(null);
+            setFormikState(initialValues);
+            if (res.status === 200) {
+                alert("Sign Up Success");
+                //redirect to login
+            } else {
+                alert("Sign Up Failed");
+            }
         } catch (error) {
+            alert("Sign Up Failed");
             console.log("🚀 ~ file: SignUpScreen.js90 ~ handleSubmit ~ error", error);
         }
     };
@@ -64,12 +75,13 @@ const SignUpScreen = () => {
             <ImageBackground source={require("../assets/background.jpg")} style={styles.ImageBack}>
                 <View style={styles.container}>
                     <Text style={styles.title}>Create A New Account</Text>
+                    {error && <Text style={styles.error}>{error}</Text>}
                     <View style={styles.form}>
                         {image && <Image source={{ uri: image }} style={styles.image} />}
                         <Formik initialValues={formikState} onSubmit={handleSubmit} validationSchema={validationSchema}>
                             {({ handleChange, handleSubmit, errors, setFieldTouched, touched }) => (
                                 <>
-                                    <TextInput
+                                    {/* <TextInput
                                         style={styles.input}
                                         placeholder="Email"
                                         onChangeText={handleChange("email")}
@@ -78,7 +90,22 @@ const SignUpScreen = () => {
                                         autoCapitalize="none"
                                         autoCorrect={false}
                                     />
-                                    {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
+                                    {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>} */}
+                                    <Text style={styles.label}>Nick Name</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Nick Name"
+                                        onChangeText={handleChange("nickname")}
+                                        onBlur={() => setFieldTouched("nickname")}
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                    />
+                                    {touched.nickname && errors.nickname && (
+                                        <Text style={styles.error}>{errors.nickname}</Text>
+                                    )}
+                                    <Text style={styles.comment}>you can do change your nick name later</Text>
+                                    <Text style={styles.label}>Password</Text>
+
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Password"
@@ -91,25 +118,13 @@ const SignUpScreen = () => {
                                     {touched.password && errors.password && (
                                         <Text style={styles.error}>{errors.password}</Text>
                                     )}
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="Nickname"
-                                        onChangeText={handleChange("nickname")}
-                                        onBlur={() => setFieldTouched("nickname")}
-                                        autoCapitalize="none"
-                                        autoCorrect={false}
-                                    />
-                                    {touched.nickname && errors.nickname && (
-                                        <Text style={styles.error}>{errors.nickname}</Text>
-                                    )}
                                     <AppButton color={colors.green} width="80%" text="Sign Up" onPress={handleSubmit} />
                                 </>
                             )}
                         </Formik>
-                        <Text style={styles.comment}>you can do change your nick name later</Text>
+                        <AppButton color={colors.green} width="80%" text="Upload Image" onPress={handleImagePicker} />
+                        <Text style={styles.comment}>you can upload/edit your image later</Text>
                     </View>
-                    <AppButton color={colors.green} width="80%" text="Upload Image" onPress={handleImagePicker} />
-                    <Text style={styles.comment}>you can upload/edit your image later</Text>
                 </View>
             </ImageBackground>
         </SafeAreaView>
@@ -153,9 +168,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         marginBottom: 5,
-        color: "#000",
-        alignSelf: "flex-start",
-        marginLeft: 15,
+        color: colors.green,
+        alignSelf: "flex-end",
+        paddingLeft: 10,
+        // marginLeft: 45,
     },
     input: {
         width: 300,
