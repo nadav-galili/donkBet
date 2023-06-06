@@ -51,19 +51,20 @@ const SignUpScreen = ({ navigation }) => {
             formData.append("password", values.password);
             formData.append("nickName", values.nickname);
             const res = await userService.signUp(formData);
-            console.log("🚀 ~ file: SignUpScreen.js:88 ~ handleSubmit ~ res", res.data);
-            if (res.data.error) {
+
+            if (res?.data?.error) {
+                console.log("🚀 ~ file: SignUpScreen.js:56 ~ handleSubmit ~ error:", res);
                 setError(res.data.error);
                 return;
             }
             setError(null);
             setFormikState(initialValues);
+
             if (res.status === 200) {
-                console.log("🚀 ~ file: SignUpScreen.js:62 ~ handleSubmit ~ res:", res?.data?.user?.token);
                 alert("Sign Up Success");
-                await userService.storeToken(res?.data?.user?.token);
-                //redirect to login
-                navigation.navigate("League", { screen: "LeagueTab" });
+                await userService.login(values.nickname, values.password);
+
+                navigation.navigate("MyLeagues", { screen: "LeagueTab" });
             } else {
                 alert("Sign Up Failed");
             }

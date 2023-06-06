@@ -6,24 +6,24 @@ import { colors } from "../colors";
 export default function HomeScreen({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground source={require("../assets/background.jpg")} style={styles.container}>
+            <ImageBackground source={require("../assets/vibrant.webp")} style={styles.container}>
                 {/* <Text style={styles.header}>Welcome To </Text> */}
                 <Image source={require("../assets/donkLogo2.webp")} style={styles.image} />
                 {/* <Text style={styles.header}>Donk Bet App</Text> */}
                 <View>
                     <AppButton
-                        color={colors.green}
+                        color={colors.Complementary}
                         width="90%"
                         text="Log in"
                         onPress={() => navigation.navigate("Login")}
                     />
                     <AppButton
-                        color={colors.blue}
+                        color={colors.Background}
                         width="90%"
                         text="Create an account"
                         onPress={() => navigation.navigate("SignUp")}
                     />
-                    <AppButton color={colors.primary} width="90%" text="Take A Tour" onPress={console.log("about")} />
+                    <AppButton color={colors.Accent} width="90%" text="Take A Tour" onPress={console.log("about")} />
                 </View>
             </ImageBackground>
         </SafeAreaView>

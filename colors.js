@@ -10,4 +10,11 @@ export const colors = {
     yellow: "#ffce4b",
     blue: "#007bff",
     green: "#13dd2e",
+
+    Primary: "#D83A56",
+    Secondary: "#FF616D",
+    Background: "#FFE156",
+    Complementary: "#3AD29F",
+    Neutral: "#393E46",
+    Accent: "#5267DF",
 };
