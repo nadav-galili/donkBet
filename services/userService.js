@@ -1,6 +1,7 @@
 import http from "./httpService";
 import { SERVER_URL } from "../config.js";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export async function signUp(formData) {
     var config = {
@@ -13,6 +14,14 @@ export async function signUp(formData) {
     return res;
 }
 
+export async function storeToken(token) {
+    try {
+        await AsyncStorage.setItem("token", token);
+    } catch (error) {
+        console.log("🚀 ~ file: userService.js ~ line 64 ~ storeToken ~ error", error);
+    }
+}
 export default {
     signUp,
+    storeToken,
 };

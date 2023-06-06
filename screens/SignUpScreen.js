@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Image, Text, SafeAreaView, ImageBackground, Platform } from "react-native";
+import { StyleSheet, View, TextInput, Image, Text, SafeAreaView, ImageBackground } from "react-native";
 import { colors } from "../colors";
 import AppButton from "../components/AppButton";
 import * as ImagePicker from "expo-image-picker";
@@ -59,9 +59,11 @@ const SignUpScreen = ({ navigation }) => {
             setError(null);
             setFormikState(initialValues);
             if (res.status === 200) {
+                console.log("🚀 ~ file: SignUpScreen.js:62 ~ handleSubmit ~ res:", res?.data?.user?.token);
                 alert("Sign Up Success");
+                await userService.storeToken(res?.data?.user?.token);
                 //redirect to login
-                navigation.navigate("Login");
+                navigation.navigate("League", { screen: "LeagueTab" });
             } else {
                 alert("Sign Up Failed");
             }
