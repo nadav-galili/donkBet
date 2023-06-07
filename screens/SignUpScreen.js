@@ -6,6 +6,7 @@ import * as ImagePicker from "expo-image-picker";
 import userService from "../services/userService";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import Toast from "react-native-toast-message";
 
 const validationSchema = Yup.object().shape({
     password: Yup.string().required().min(4).label("password"),
@@ -61,7 +62,6 @@ const SignUpScreen = ({ navigation }) => {
             setFormikState(initialValues);
 
             if (res.status === 200) {
-                alert("Sign Up Success");
                 await userService.login(values.nickname, values.password);
 
                 navigation.navigate("MyLeagues", { screen: "LeagueTab" });
@@ -69,14 +69,21 @@ const SignUpScreen = ({ navigation }) => {
                 alert("Sign Up Failed");
             }
         } catch (error) {
-            alert("Sign Up Failed");
+            if (error.response.status === 400) {
+                Toast.show({
+                    topOffset: 60,
+                    type: "error",
+                    text1: "This nickname already exists",
+                    text2: "Please choose a different nickname",
+                });
+            }
             console.log("🚀 ~ file: SignUpScreen.js90 ~ handleSubmit ~ error", error);
         }
     };
 
     return (
         <SafeAreaView style={styles.ImageBack}>
-            <ImageBackground source={require("../assets/background.jpg")} style={styles.ImageBack}>
+            <ImageBackground source={require("../assets/liquid-cheese.png")} style={styles.ImageBack}>
                 <View style={styles.container}>
                     <Text style={styles.title}>Create A New Account</Text>
                     {error && <Text style={styles.error}>{error}</Text>}
@@ -172,7 +179,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         marginBottom: 5,
-        color: colors.green,
+        color: colors.Accent,
         alignSelf: "flex-end",
         paddingLeft: 10,
         // marginLeft: 45,

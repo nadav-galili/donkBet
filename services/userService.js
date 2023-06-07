@@ -24,43 +24,23 @@ export async function signUp(formData) {
 
 export async function login(nickName, password) {
     const tokenKey = "token";
-    console.log("🚀 ~ file: userService.js:27 ~ login ~ nickName:", nickName);
-
     const { data } = await http.post(`${SERVER_URL}/api/auth`, { nickName, password });
-
-    console.log("🚀 ~ file: userService.js:31 ~ login ~ data:", data);
     await AsyncStorage.setItem(tokenKey, data.token);
 }
 
-async function getToken() {
-    try {
-        const token = await AsyncStorage.getItem("token");
-        console.log("🚀 ~ file: userService.js:28 ~ getToken ~ token:", token);
-        if (token !== null) {
-            return token;
-        } else {
-            console.log("no token");
-            return null;
-        }
-    } catch (e) {
-        // error reading value
-        console.log(e);
-    }
-}
-
-async function getUser() {
-    const token = await getToken();
-    console.log("🚀 ~ file: userService.js:28 ~ getToken ~ token:", token);
-    if (token !== null) {
-        return token;
-        // http.setJwt(token);
-        // const res = await http.get(`${SERVER_URL}/api/users/me`);
-        // return res;
-    } else {
-        console.log("no token");
-        return null;
-    }
-}
+// async function getUser() {
+//     const token = await getToken();
+//     console.log("🚀 ~ file: userService.js:28 ~ getToken ~ token:", token);
+//     if (token !== null) {
+//         return token;
+//         // http.setJwt(token);
+//         // const res = await http.get(`${SERVER_URL}/api/users/me`);
+//         // return res;
+//     } else {
+//         console.log("no token");
+//         return null;
+//     }
+// }
 
 export default {
     signUp,

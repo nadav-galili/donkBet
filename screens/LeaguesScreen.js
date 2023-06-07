@@ -1,21 +1,16 @@
 import React, { useEffect } from "react";
 import { StyleSheet, View, TextInput, Image, Text, SafeAreaView, ImageBackground, Platform } from "react-native";
 import userService from "../services/userService";
+import leagueService from "../services/leagueService";
 import PageHeader from "../components/PageHeader";
 import { colors } from "../colors";
 
 const LeagueScreen = ({ navigation }) => {
-    // useEffect(() => {
-    //     fetchUser();
-    // }, []);
-
-    // const fetchUser = async () => {
-    //     // const res = await userService.getUser();
-    // };
-
-    // const fetchLeagues = async () => {
-    //     const res = await userService.getMyLeagues();
-    // };
+    useEffect(() => {
+        leagueService.getMyLeagues().then((res) => {
+            console.log("🚀 ~ file: LeagueScreen.js:80 ~ leagueService.getLeagues ~ res", res.data);
+        });
+    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
