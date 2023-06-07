@@ -3,10 +3,10 @@ import { View, Image, StyleSheet } from "react-native";
 import { SERVER_URL } from "../config";
 import { colors } from "../colors";
 
-const TeamAvatar = ({ avatarSource }) => {
+const LeagueAvatar = ({ avatarSource }) => {
     return (
         <View>
-            <Image source={{ uri: `${SERVER_URL}/teamAvatars/${avatarSource}` }} style={styles.avatar} />
+            <Image source={{ uri: `${SERVER_URL}/LeagueAvatars/${avatarSource}` }} style={styles.avatar} />
         </View>
     );
 };
@@ -22,4 +22,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default TeamAvatar;
+export default LeagueAvatar;

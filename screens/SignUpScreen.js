@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Image, Text, SafeAreaView, ImageBackground } from "react-native";
+import {
+    ActivityIndicator,
+    StyleSheet,
+    View,
+    TextInput,
+    Image,
+    Text,
+    SafeAreaView,
+    ImageBackground,
+} from "react-native";
 import { colors } from "../colors";
 import AppButton from "../components/AppButton";
 import * as ImagePicker from "expo-image-picker";
@@ -15,9 +24,10 @@ const validationSchema = Yup.object().shape({
 
 const SignUpScreen = ({ navigation }) => {
     const [image, setImage] = useState(null);
-    const initialValues = { email: "", password: "", nickname: "" };
+    const initialValues = { password: "", nickname: "" };
     const [error, setError] = useState(null);
     const [formikState, setFormikState] = useState(initialValues);
+    const [loading, setLoading] = useState(false);
 
     const handleImagePicker = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -78,6 +88,8 @@ const SignUpScreen = ({ navigation }) => {
                 });
             }
             console.log("🚀 ~ file: SignUpScreen.js90 ~ handleSubmit ~ error", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -92,16 +104,6 @@ const SignUpScreen = ({ navigation }) => {
                         <Formik initialValues={formikState} onSubmit={handleSubmit} validationSchema={validationSchema}>
                             {({ handleChange, handleSubmit, errors, setFieldTouched, touched }) => (
                                 <>
-                                    {/* <TextInput
-                                        style={styles.input}
-                                        placeholder="Email"
-                                        onChangeText={handleChange("email")}
-                                        onBlur={() => setFieldTouched("email")}
-                                        keyboardType="email-address"
-                                        autoCapitalize="none"
-                                        autoCorrect={false}
-                                    />
-                                    {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>} */}
                                     <Text style={styles.label}>Nick Name</Text>
                                     <TextInput
                                         style={styles.input}
@@ -114,7 +116,7 @@ const SignUpScreen = ({ navigation }) => {
                                     {touched.nickname && errors.nickname && (
                                         <Text style={styles.error}>{errors.nickname}</Text>
                                     )}
-                                    <Text style={styles.comment}>you can do change your nick name later</Text>
+                                    <Text style={styles.comment}>you can change your nick name later</Text>
                                     <Text style={styles.label}>Password</Text>
 
                                     <TextInput
@@ -129,7 +131,14 @@ const SignUpScreen = ({ navigation }) => {
                                     {touched.password && errors.password && (
                                         <Text style={styles.error}>{errors.password}</Text>
                                     )}
-                                    <AppButton color={colors.green} width="80%" text="Sign Up" onPress={handleSubmit} />
+                                    <AppButton
+                                        color={colors.green}
+                                        width="80%"
+                                        text="Sign Up"
+                                        onPress={handleSubmit}
+                                        disabled={loading}
+                                    />
+                                    {loading && <ActivityIndicator />}
                                 </>
                             )}
                         </Formik>

@@ -11,7 +11,7 @@ export default function Navigation() {
         <Stack.Navigator initialRouteName="Home">
             <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
             <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
             <Stack.Screen name="MyLeagues" component={BottomTabNavigator} options={{ headerShown: false }} />
         </Stack.Navigator>
     );

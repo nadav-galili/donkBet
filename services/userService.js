@@ -26,7 +26,10 @@ export async function login(nickName, password) {
     const tokenKey = "token";
     const { data } = await http.post(`${SERVER_URL}/api/auth`, { nickName, password });
     await AsyncStorage.setItem(tokenKey, data.token);
+    console.log("🚀 ~ file: userService.js:29 ~ login ~ data:", data);
+    return data;
 }
+
 export function getUserDetails() {
     return http.get(`${SERVER_URL}/api/users/me`);
 }

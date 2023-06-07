@@ -4,7 +4,7 @@ import userService from "../services/userService";
 import leagueService from "../services/leagueService";
 import PageHeader from "../components/PageHeader";
 import UserAvatar from "../components/UserAvatar";
-import TeamAvatar from "../components/teamAvatar";
+import LeagueAvatar from "../components/LeagueAvatar";
 import AppButton from "../components/AppButton";
 import { colors } from "../colors";
 
@@ -45,7 +45,7 @@ const LeagueScreen = ({ navigation }) => {
                             <View key={league.id} style={styles.leagueContainer}>
                                 <Text style={styles.leagueName}>{league.League.league_name}</Text>
                                 <Text>League Number</Text>
-                                <TeamAvatar avatarSource={league.League.league_image} />
+                                <LeagueAvatar avatarSource={league.League.league_image} />
                                 <Text>League Manager</Text>
                                 <Text>Players</Text>
                                 <AppButton
