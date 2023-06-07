@@ -27,7 +27,9 @@ export async function login(nickName, password) {
     const { data } = await http.post(`${SERVER_URL}/api/auth`, { nickName, password });
     await AsyncStorage.setItem(tokenKey, data.token);
 }
-
+export function getUserDetails() {
+    return http.get(`${SERVER_URL}/api/users/me`);
+}
 // async function getUser() {
 //     const token = await getToken();
 //     console.log("🚀 ~ file: userService.js:28 ~ getToken ~ token:", token);
@@ -44,7 +46,6 @@ export async function login(nickName, password) {
 
 export default {
     signUp,
-    // storeToken,
-
     login,
+    getUserDetails,
 };

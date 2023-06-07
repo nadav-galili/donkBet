@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, TextInput, Image, Text, SafeAreaView, ImageBackground, Platform } from "react-native";
 import userService from "../services/userService";
 import leagueService from "../services/leagueService";
@@ -6,17 +6,22 @@ import PageHeader from "../components/PageHeader";
 import { colors } from "../colors";
 
 const LeagueScreen = ({ navigation }) => {
+    const [user, setUser] = useState(null);
     useEffect(() => {
-        leagueService.getMyLeagues().then((res) => {
-            console.log("🚀 ~ file: LeagueScreen.js:80 ~ leagueService.getLeagues ~ res", res.data);
-        });
+        fetchUser();
     }, []);
 
+    const fetchUser = async () => {
+        const userData = await userService.getUserDetails();
+        console.log("🚀 ~ file: LeaguesScreen.js:16 ~ fetchUser ~ userData:", userData?.data?.user);
+        setUser(userData.data.user);
+    };
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require("../assets/vibrant.webp")} style={styles.container}>
                 <View style={styles.headerContainer}>
                     <PageHeader text="My Leagues" color={colors.Background} />
+                    {user?.nickName && <Text>{user.nickName}</Text>}
                 </View>
             </ImageBackground>
         </SafeAreaView>
