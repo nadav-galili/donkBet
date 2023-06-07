@@ -17,4 +17,12 @@ export const colors = {
     Complementary: "#3AD29F",
     Neutral: "#393E46",
     Accent: "#5267DF",
+    MediumPurple: "#8B5FBF",
+
+    DarkBlue: "#192A56",
+    MediumBlue: "#3F88C5",
+    LightBlue: "#AED9E0",
+    DarkGreen: "#134611",
+    MediumGreen: "#3AAE47",
+    LightGreen: "#9BEF93",
 };
