@@ -34,61 +34,61 @@ const LeagueScreen = () => {
     };
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground source={require("../assets/background.jpg")} style={styles.container}>
-                <ScrollView>
-                    <View style={styles.avatar}>{user?.nickName && <UserAvatar avatarSource={user.image} />}</View>
-                    <View style={styles.joinButtons}>
-                        <Button
-                            icon="plus-circle"
-                            mode="text"
-                            textColor="white"
-                            onPress={() => navigation.navigate("LeaguesRegistration")}
-                        >
-                            Create New League
-                        </Button>
-                        <Button
-                            icon="account-multiple-plus"
-                            mode="text"
-                            textColor={colors.Background}
-                            onPress={() => console.log("Pressed")}
-                        >
-                            Join A League
-                        </Button>
+            {/* <ImageBackground source={require("../assets/background.jpg")} style={styles.container}> */}
+            <ScrollView>
+                <View style={styles.avatar}>{user?.nickName && <UserAvatar avatarSource={user.image} />}</View>
+                <View style={styles.joinButtons}>
+                    <Button
+                        icon="plus-circle"
+                        mode="text"
+                        textColor={colors.Accent}
+                        onPress={() => navigation.navigate("LeaguesRegistration")}
+                    >
+                        Create New League
+                    </Button>
+                    <Button
+                        icon="account-multiple-plus"
+                        mode="text"
+                        textColor={colors.Complementary}
+                        onPress={() => console.log("Pressed")}
+                    >
+                        Join A League
+                    </Button>
+                </View>
+                <View style={styles.headerContainer}>
+                    <PageHeader text="My Leagues" color={colors.purple} />
+                </View>
+                {Array.isArray(leagues) && leagues.length < 1 && (
+                    <View style={styles.noLeagues}>
+                        <Text variant="titleLarge">No leagues yet...</Text>
+                        <Text variant="titleLarge">join Or create a lague</Text>
                     </View>
-                    <View style={styles.headerContainer}>
-                        <PageHeader text="My Leagues" color={colors.white} />
-                    </View>
-                    {Array.isArray(leagues) && leagues.length < 1 && (
-                        <View style={styles.noLeagues}>
-                            <Text variant="titleLarge">No leagues yet...</Text>
-                            <Text variant="titleLarge">join Or create a lague</Text>
+                )}
+                <View style={styles.leaguesContainer}>
+                    {leagues?.map((league) => (
+                        <View key={league.id} style={styles.leagueContainer}>
+                            <Text style={styles.leagueName}>{league.League.league_name}</Text>
+                            <Text>League Number</Text>
+                            <LeagueAvatar avatarSource={league.League.league_image} />
+                            <Text>League Manager</Text>
+                            <Text>Players</Text>
+                            <AppButton
+                                color={colors.Accent}
+                                width="70%"
+                                text="League Statistics"
+                                onPress={() => console.log("league stats clicked")}
+                            />
+                            <AppButton
+                                color={colors.Complementary}
+                                width="70%"
+                                text="Start A New Game"
+                                onPress={() => console.log("start a new game clicked")}
+                            />
                         </View>
-                    )}
-                    <View style={styles.leaguesContainer}>
-                        {leagues?.map((league) => (
-                            <View key={league.id} style={styles.leagueContainer}>
-                                <Text style={styles.leagueName}>{league.League.league_name}</Text>
-                                <Text>League Number</Text>
-                                <LeagueAvatar avatarSource={league.League.league_image} />
-                                <Text>League Manager</Text>
-                                <Text>Players</Text>
-                                <AppButton
-                                    color={colors.Accent}
-                                    width="70%"
-                                    text="League Statistics"
-                                    onPress={() => console.log("league stats clicked")}
-                                />
-                                <AppButton
-                                    color={colors.Complementary}
-                                    width="70%"
-                                    text="Start A New Game"
-                                    onPress={() => console.log("start a new game clicked")}
-                                />
-                            </View>
-                        ))}
-                    </View>
-                </ScrollView>
-            </ImageBackground>
+                    ))}
+                </View>
+            </ScrollView>
+            {/* </ImageBackground> */}
         </SafeAreaView>
     );
 };
@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
+        backgroundColor: colors.white,
     },
     headerContainer: {
         marginTop: Platform.OS === "android" ? 15 : 0,

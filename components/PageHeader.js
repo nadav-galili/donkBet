@@ -2,10 +2,10 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
 
-const PageHeader = ({ text, color }) => {
+const PageHeader = ({ text, color, variant }) => {
     return (
         <View style={styles.container}>
-            <Text variant="displaySmall" style={[styles.text, { color }]}>
+            <Text variant={variant} style={[styles.text, { color }]}>
                 {text}
             </Text>
         </View>
