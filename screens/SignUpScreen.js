@@ -1,13 +1,33 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Button, Image, TouchableOpacity, Text } from "react-native";
+import {
+    ActivityIndicator,
+    StyleSheet,
+    View,
+    TextInput,
+    Image,
+    Text,
+    SafeAreaView,
+    ImageBackground,
+} from "react-native";
+import { colors } from "../colors";
+import AppButton from "../components/AppButton";
 import * as ImagePicker from "expo-image-picker";
-import { registerRootComponent } from "expo";
+import userService from "../services/userService";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import Toast from "react-native-toast-message";
 
-const SignUpScreen = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [nickname, setNickname] = useState("");
+const validationSchema = Yup.object().shape({
+    password: Yup.string().required().min(4).label("password"),
+    nickname: Yup.string().required().min(2).label("nickname"),
+});
+
+const SignUpScreen = ({ navigation }) => {
     const [image, setImage] = useState(null);
+    const initialValues = { password: "", nickname: "" };
+    const [error, setError] = useState(null);
+    const [formikState, setFormikState] = useState(initialValues);
+    const [loading, setLoading] = useState(false);
 
     const handleImagePicker = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -25,89 +45,132 @@ const SignUpScreen = () => {
 
         if (!result.canceled) {
             const assets = result.assets;
-
             const uri = assets[0].uri;
             setImage(uri);
-            const type = uri.split(".")[1];
-            const name = uri.split("/").pop();
-            const file = {
-                uri,
-                type: `image/${type}`,
-                name,
-            };
-            console.log("🚀 ~ file: SignUpScreen.js:33 ~ handleImagePicker ~ file:", file);
         }
     };
+    const handleSubmit = async (values) => {
+        try {
+            const formData = new FormData();
+            if (image) {
+                formData.append("image", {
+                    name: `${values.nickname}.jpg`,
+                    uri: image,
+                    type: "image/jpeg",
+                });
+            }
+            formData.append("password", values.password);
+            formData.append("nickName", values.nickname);
+            const res = await userService.signUp(formData);
 
-    const handleSubmit = () => {
-        ///validate inputs
-        ///validate inputs
-        if (!email || !password) {
-            alert("Email and password are required.");
-            return;
+            if (res?.data?.error) {
+                console.log("🚀 ~ file: SignUpScreen.js:56 ~ handleSubmit ~ error:", res);
+                setError(res.data.error);
+                return;
+            }
+            setError(null);
+            setFormikState(initialValues);
+
+            if (res.status === 200) {
+                await userService.login(values.nickname, values.password);
+
+                navigation.navigate("MyLeagues", { screen: "LeagueTab" });
+            } else {
+                alert("Sign Up Failed");
+            }
+        } catch (error) {
+            if (error.response.status === 400) {
+                Toast.show({
+                    topOffset: 60,
+                    type: "error",
+                    text1: "This nickname already exists",
+                    text2: "Please choose a different nickname",
+                });
+            }
+            console.log("🚀 ~ file: SignUpScreen.js90 ~ handleSubmit ~ error", error);
+        } finally {
+            setLoading(false);
         }
-        ///if email is not a valid email address
-        if (!email.includes("@") || !email.includes(".")) {
-            alert("Email must be a valid email address.");
-            return;
-        }
-        if (password.length < 4) {
-            alert("Password must be at least 4 characters.");
-            return;
-        }
-        ///if nickname is not a valid nickname
-        if (nickname.length < 2) {
-            alert("Nickname must be at least 2 characters.");
-            return;
-        }
-        console.log("Email:", email);
-        console.log("Password:", password);
-        console.log("Nickname:", nickname);
-        console.log("Image:", image);
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Sign Up</Text>
-            <View style={styles.form}>
-                {image && <Image source={{ uri: image }} style={styles.image} />}
-                <TextInput
-                    placeholder="Enter your email address"
-                    value={email}
-                    onChangeText={setEmail}
-                    style={styles.input}
-                />
+        <SafeAreaView style={styles.ImageBack}>
+            <ImageBackground source={require("../assets/liquid-cheese.png")} style={styles.ImageBack}>
+                <View style={styles.container}>
+                    <Text style={styles.title}>Create A New Account</Text>
+                    {error && <Text style={styles.error}>{error}</Text>}
+                    <View style={styles.form}>
+                        {image && <Image source={{ uri: image }} style={styles.image} />}
+                        <Formik initialValues={formikState} onSubmit={handleSubmit} validationSchema={validationSchema}>
+                            {({ handleChange, handleSubmit, errors, setFieldTouched, touched }) => (
+                                <>
+                                    <Text style={styles.label}>Nick Name</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Nick Name"
+                                        onChangeText={handleChange("nickname")}
+                                        onBlur={() => setFieldTouched("nickname")}
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                    />
+                                    {touched.nickname && errors.nickname && (
+                                        <Text style={styles.error}>{errors.nickname}</Text>
+                                    )}
+                                    <Text style={styles.comment}>you can change your nick name later</Text>
+                                    <Text style={styles.label}>Password</Text>
 
-                <TextInput
-                    placeholder="Enter your password"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry={true}
-                    style={styles.input}
-                />
-
-                <TextInput
-                    placeholder="Enter your nickname..you can do it later"
-                    value={nickname}
-                    onChangeText={setNickname}
-                    style={styles.input}
-                />
-                <TouchableOpacity style={styles.uploadButton} onPress={handleImagePicker}>
-                    <Text style={styles.uploadText}>Upload Image</Text>
-                </TouchableOpacity>
-            </View>
-            <Button title="Sign Up" onPress={handleSubmit} color="#fff" />
-        </View>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Password"
+                                        onChangeText={handleChange("password")}
+                                        onBlur={() => setFieldTouched("password")}
+                                        secureTextEntry
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                    />
+                                    {touched.password && errors.password && (
+                                        <Text style={styles.error}>{errors.password}</Text>
+                                    )}
+                                    <AppButton
+                                        color={colors.green}
+                                        width="80%"
+                                        text="Sign Up"
+                                        onPress={handleSubmit}
+                                        disabled={loading}
+                                    />
+                                    {loading && <ActivityIndicator />}
+                                </>
+                            )}
+                        </Formik>
+                        <AppButton color={colors.green} width="80%" text="Upload Image" onPress={handleImagePicker} />
+                        <Text style={styles.comment}>you can upload/edit your image later</Text>
+                    </View>
+                </View>
+            </ImageBackground>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#fff",
     },
+    comment: {
+        fontSize: 12,
+    },
+    error: {
+        fontSize: 10,
+        color: "red",
+        backgroundColor: "#fff",
+        marginVertical: 10,
+    },
+    ImageBack: {
+        flex: 1,
+        resizeMode: "cover",
+        justifyContent: "center",
+    },
+
     form: {
         width: "80%",
         marginBottom: 20,
@@ -117,17 +180,18 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: "bold",
-        marginBottom: 5,
-        color: "#000",
+        marginBottom: 40,
+        color: colors.white,
         alignSelf: "center",
     },
     label: {
         fontSize: 18,
         fontWeight: "bold",
         marginBottom: 5,
-        color: "#000",
-        alignSelf: "flex-start",
-        marginLeft: 15,
+        color: colors.Accent,
+        alignSelf: "flex-end",
+        paddingLeft: 10,
+        // marginLeft: 45,
     },
     input: {
         width: 300,
