@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, ScrollView, Text, SafeAreaView, ImageBackground, Platform } from "react-native";
+import { StyleSheet, View, ScrollView, SafeAreaView, ImageBackground, Platform } from "react-native";
+import { Button, Text } from "react-native-paper";
+
+import { useNavigation } from "@react-navigation/native";
 import userService from "../services/userService";
 import leagueService from "../services/leagueService";
 import PageHeader from "../components/PageHeader";
@@ -8,13 +11,15 @@ import LeagueAvatar from "../components/LeagueAvatar";
 import AppButton from "../components/AppButton";
 import { colors } from "../colors";
 
-const LeagueScreen = ({ navigation }) => {
+const LeagueScreen = () => {
     const [user, setUser] = useState(null);
     const [leagues, setLeagues] = useState(null);
     useEffect(() => {
         fetchUser();
         fetchLeagues();
     }, []);
+
+    const navigation = useNavigation();
 
     const fetchLeagues = async () => {
         if (!user) return;
@@ -33,13 +38,32 @@ const LeagueScreen = ({ navigation }) => {
                 <ScrollView>
                     <View style={styles.avatar}>{user?.nickName && <UserAvatar avatarSource={user.image} />}</View>
                     <View style={styles.joinButtons}>
-                        <Text>Create A New League</Text>
-                        <Text>Join Your Friends League</Text>
+                        <Button
+                            icon="plus-circle"
+                            mode="text"
+                            textColor="white"
+                            onPress={() => navigation.navigate("LeaguesRegistration")}
+                        >
+                            Create New League
+                        </Button>
+                        <Button
+                            icon="account-multiple-plus"
+                            mode="text"
+                            textColor={colors.Background}
+                            onPress={() => console.log("Pressed")}
+                        >
+                            Join A League
+                        </Button>
                     </View>
                     <View style={styles.headerContainer}>
-                        <PageHeader text="My Leagues" color={"#3AD29F"} />
+                        <PageHeader text="My Leagues" color={colors.white} />
                     </View>
-                    {!leagues && <Text>No leagues yet...</Text>}
+                    {Array.isArray(leagues) && leagues.length < 1 && (
+                        <View style={styles.noLeagues}>
+                            <Text variant="titleLarge">No leagues yet...</Text>
+                            <Text variant="titleLarge">join Or create a lague</Text>
+                        </View>
+                    )}
                     <View style={styles.leaguesContainer}>
                         {leagues?.map((league) => (
                             <View key={league.id} style={styles.leagueContainer}>
@@ -104,6 +128,11 @@ const styles = StyleSheet.create({
         color: colors.MediumBlue,
         textTransform: "capitalize",
         textDecorationLine: "underline",
+    },
+    noLeagues: {
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 20,
     },
 });
 
