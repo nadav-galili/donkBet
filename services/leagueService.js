@@ -20,7 +20,7 @@ export async function createLeague(formData) {
     };
 
     const res = await axios(config);
-    console.log("🚀 ~ file: leagueService.js:23 ~ createLeague ~ res:", res.data);
+    return res;
 }
 
 export default {

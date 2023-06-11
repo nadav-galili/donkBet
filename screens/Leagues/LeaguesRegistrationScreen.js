@@ -14,7 +14,7 @@ const validationSchema = Yup.object().shape({
     leagueName: Yup.string().required().min(2).label("leagueName"),
 });
 
-const LeaguesRegistrationScreen = () => {
+const LeaguesRegistrationScreen = ({ navigation }) => {
     const initialValues = { leagueName: "" };
     const [formikState, setFormikState] = useState(initialValues);
     const [loading, setLoading] = useState(false);
@@ -56,8 +56,24 @@ const LeaguesRegistrationScreen = () => {
             formData.append("userId", user.id);
 
             const res = await leagueService.createLeague(formData);
-        } catch (err) {
-            console.log(err);
+            if (res.status === 200) {
+                Toast.show({
+                    topOffset: 60,
+                    type: "success",
+                    text1: "League Created",
+                    text2: "Please wait while we redirect you to the home page",
+                });
+                setTimeout(() => {
+                    navigation.navigate("MyLeagues", { screen: "LeagueTab" });
+                }, 300);
+            }
+        } catch (error) {
+            Toast.show({
+                topOffset: 60,
+                type: "error",
+                text1: error.message,
+                text2: "Please try again",
+            });
         }
     };
 

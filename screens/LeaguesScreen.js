@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, ScrollView, SafeAreaView, ImageBackground, Platform } from "react-native";
+import { StyleSheet, View, ScrollView, SafeAreaView, Platform } from "react-native";
 import { Button, Text } from "react-native-paper";
 
 import { useNavigation } from "@react-navigation/native";
@@ -14,23 +14,35 @@ import { colors } from "../colors";
 const LeagueScreen = () => {
     const [user, setUser] = useState(null);
     const [leagues, setLeagues] = useState(null);
-    useEffect(() => {
-        fetchUser();
-        fetchLeagues();
-    }, []);
-
     const navigation = useNavigation();
 
-    const fetchLeagues = async () => {
-        if (!user) return;
-        const { data } = await leagueService.getMyLeagues(user.id);
-        console.log("🚀 ~ file: LeaguesScreen.js:18 ~ fetchLeagues ~ leagues:", data);
-        setLeagues(data);
-    };
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", () => {
+            // This code will be executed when the screen comes into focus
+            fetchUser();
+            // fetchLeagues();
+        });
+
+        // Return a cleanup function to remove the event listener
+        return unsubscribe;
+    }, [navigation]);
+
+    // const fetchLeagues = async () => {
+    //     console.log("🚀 ~ file: LeaguesScreen.js:33 ~ fetchLeagues ~ user:", user);
+    //     if (!user) return;
+    //     const { data } = await leagueService.getMyLeagues(user.id);
+    //     console.log("🚀 ~ file: LeaguesScreen.js:18 ~ fetchLeagues ~ leagues:", data);
+    //     setLeagues(data);
+    // };
     const fetchUser = async () => {
         const userData = await userService.getUserDetails();
         console.log("🚀 ~ file: LeaguesScreen.js:16 ~ fetchUser ~ userData:", userData?.data?.user);
         setUser(userData.data.user);
+        if (userData.data.user) {
+            const { data } = await leagueService.getMyLeagues(userData.data.user.id);
+            console.log("🚀 ~ file: LeaguesScreen.js:18 ~ fetchLeagues ~ leagues:", data);
+            setLeagues(data);
+        }
     };
     return (
         <SafeAreaView style={styles.container}>
