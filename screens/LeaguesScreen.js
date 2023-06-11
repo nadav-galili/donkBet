@@ -42,7 +42,7 @@ const LeagueScreen = () => {
                         icon="plus-circle"
                         mode="text"
                         textColor={colors.Accent}
-                        onPress={() => navigation.navigate("LeaguesRegistration")}
+                        onPress={() => navigation.navigate("LeaguesRegistration", { user })}
                     >
                         Create New League
                     </Button>

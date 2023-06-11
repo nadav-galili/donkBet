@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { View, SafeAreaView, StyleSheet, Image } from "react-native";
 import { colors } from "../../colors";
 import PageHeader from "../../components/PageHeader";
+import leagueService from "../../services/leagueService";
 import { Text, TextInput, Button } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import Toast from "react-native-toast-message";
 import * as ImagePicker from "expo-image-picker";
+import { useRoute } from "@react-navigation/native";
 
 const validationSchema = Yup.object().shape({
     leagueName: Yup.string().required().min(2).label("leagueName"),
@@ -17,7 +19,9 @@ const LeaguesRegistrationScreen = () => {
     const [formikState, setFormikState] = useState(initialValues);
     const [loading, setLoading] = useState(false);
     const [image, setImage] = useState(null);
+    const route = useRoute();
 
+    const user = route.params.user;
     const handleImagePicker = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
@@ -39,7 +43,22 @@ const LeaguesRegistrationScreen = () => {
         }
     };
     const handleSubmit = async (values) => {
-        console.log("🚀 ~ file: LeaguesRegistrationScreen.js:17 ~ handleSubmit ~ values:", values);
+        try {
+            const formData = new FormData();
+            if (image) {
+                formData.append("image", {
+                    name: `${values.leagueName}.jpg`,
+                    uri: image,
+                    type: "image/jpeg",
+                });
+            }
+            formData.append("leagueName", values.leagueName);
+            formData.append("userId", user.id);
+
+            const res = await leagueService.createLeague(formData);
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     return (
@@ -107,8 +126,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
         color: colors.blue,
-        // alignSelf: "flex-start",
-        // marginLeft: 20,
     },
     input: {
         width: "80%",
