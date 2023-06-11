@@ -16,6 +16,8 @@ const styles = StyleSheet.create({
     text: {
         color: "white",
         textDecorationLine: "underline",
+        fontSize: 24,
+        fontWeight: "bold",
     },
 });
 

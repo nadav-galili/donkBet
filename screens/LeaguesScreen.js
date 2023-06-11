@@ -72,9 +72,9 @@ const LeagueScreen = () => {
                     {leagues?.map((league) => (
                         <View key={league.id} style={styles.leagueContainer}>
                             <Text style={styles.leagueName}>{league.League.league_name}</Text>
-                            <Text>League Number</Text>
+                            <Text>League Number {league.League.league_number}</Text>
                             <LeagueAvatar avatarSource={league.League.league_image} />
-                            <Text>League Manager</Text>
+                            <Text>League Manager {league.League.admin_id}</Text>
                             <Text>Players</Text>
                             <AppButton
                                 color={colors.Accent}
@@ -126,6 +126,8 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         alignItems: "center",
         justifyContent: "center",
+        borderColor: colors.MediumBlue,
+        borderWidth: 2,
     },
     leagueName: {
         fontSize: 20,

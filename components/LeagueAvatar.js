@@ -4,7 +4,6 @@ import { SERVER_URL } from "../config";
 import { colors } from "../colors";
 
 const LeagueAvatar = ({ avatarSource }) => {
-    console.log("🚀 ~ file: LeagueAvatar.js:7 ~ LeagueAvatar ~ avatarSource:", avatarSource);
     return (
         <View>
             <Image source={{ uri: `${SERVER_URL}/${avatarSource}` }} style={styles.avatar} />
