@@ -27,20 +27,12 @@ const LeagueScreen = () => {
         return unsubscribe;
     }, [navigation]);
 
-    // const fetchLeagues = async () => {
-    //     console.log("🚀 ~ file: LeaguesScreen.js:33 ~ fetchLeagues ~ user:", user);
-    //     if (!user) return;
-    //     const { data } = await leagueService.getMyLeagues(user.id);
-    //     console.log("🚀 ~ file: LeaguesScreen.js:18 ~ fetchLeagues ~ leagues:", data);
-    //     setLeagues(data);
-    // };
     const fetchUser = async () => {
         const userData = await userService.getUserDetails();
-        console.log("🚀 ~ file: LeaguesScreen.js:16 ~ fetchUser ~ userData:", userData?.data?.user);
         setUser(userData.data.user);
         if (userData.data.user) {
             const { data } = await leagueService.getMyLeagues(userData.data.user.id);
-            console.log("🚀 ~ file: LeaguesScreen.js:18 ~ fetchLeagues ~ leagues:", data);
+            console.log("🚀 ~ file: LeaguesScreen.js:35 ~ fetchUser ~ data:", data);
             setLeagues(data);
         }
     };
