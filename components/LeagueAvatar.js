@@ -13,8 +13,8 @@ const LeagueAvatar = ({ avatarSource }) => {
 
 const styles = StyleSheet.create({
     avatar: {
-        width: 100,
-        height: 100,
+        width: 120,
+        height: 120,
         borderRadius: 15,
         borderColor: colors.MediumBlue,
         borderWidth: 5,

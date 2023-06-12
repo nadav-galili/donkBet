@@ -29,11 +29,11 @@ const LeagueScreen = () => {
 
     const fetchUser = async () => {
         const userData = await userService.getUserDetails();
+        console.log("🚀 ~ file: LeaguesScreen.js:32 ~ fetchUser ~ userData:", userData.data.user);
         setUser(userData.data.user);
         if (userData.data.user) {
             const { data } = await leagueService.getMyLeagues(userData.data.user.id);
-            console.log("🚀 ~ file: LeaguesScreen.js:35 ~ fetchUser ~ data:", data);
-            setLeagues(data);
+            setLeagues(data?.user[0]?.userLeagues);
         }
     };
     return (
@@ -71,11 +71,11 @@ const LeagueScreen = () => {
                 <View style={styles.leaguesContainer}>
                     {leagues?.map((league) => (
                         <View key={league.id} style={styles.leagueContainer}>
-                            <Text style={styles.leagueName}>{league.League.league_name}</Text>
-                            <Text>League Number {league.League.league_number}</Text>
-                            <LeagueAvatar avatarSource={league.League.league_image} />
-                            <Text>League Manager {league.League.admin_id}</Text>
-                            <Text>Players</Text>
+                            <Text style={styles.leagueName}>{league.league.league_name}</Text>
+                            <Text>League Number {league.league.league_number}</Text>
+                            <LeagueAvatar avatarSource={league.league.league_image} />
+                            <Text>League Manager: {league.league.leagueAdmin.nickName}</Text>
+                            <Text>Players:</Text>
                             <AppButton
                                 color={colors.Accent}
                                 width="70%"
