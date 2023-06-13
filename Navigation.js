@@ -4,6 +4,7 @@ import HomeScreen from "./screens/HomeScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import LoginScreen from "./screens/LoginScreen";
 import LeaguesRegistrationScreen from "./screens/Leagues/LeaguesRegistrationScreen";
+import JoinLeaguesScreen from "./screens/Leagues/JoinLeaguesScreen";
 import BottomTabNavigator from "./BottomTabNavigator";
 const Stack = createStackNavigator();
 
@@ -18,6 +19,7 @@ export default function Navigation() {
                 component={LeaguesRegistrationScreen}
                 options={{ headerShown: false }}
             />
+            <Stack.Screen name="JoinLeagues" component={JoinLeaguesScreen} options={{ headerShown: false }} />
             <Stack.Screen name="MyLeagues" component={BottomTabNavigator} options={{ headerShown: false }} />
         </Stack.Navigator>
     );

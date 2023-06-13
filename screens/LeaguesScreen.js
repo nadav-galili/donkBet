@@ -14,6 +14,7 @@ import { colors } from "../colors";
 const LeagueScreen = () => {
     const [user, setUser] = useState(null);
     const [leagues, setLeagues] = useState(null);
+    const [leaguePlayers, setLeaguePlayers] = useState(null);
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -29,11 +30,12 @@ const LeagueScreen = () => {
 
     const fetchUser = async () => {
         const userData = await userService.getUserDetails();
-        console.log("🚀 ~ file: LeaguesScreen.js:32 ~ fetchUser ~ userData:", userData.data.user);
         setUser(userData.data.user);
-        if (userData.data.user) {
+        if (userData.data.user?.id) {
             const { data } = await leagueService.getMyLeagues(userData.data.user.id);
+
             setLeagues(data?.user[0]?.userLeagues);
+            setLeaguePlayers(data.leaguePlayers);
         }
     };
     return (
@@ -54,7 +56,7 @@ const LeagueScreen = () => {
                         icon="account-multiple-plus"
                         mode="text"
                         textColor={colors.Complementary}
-                        onPress={() => console.log("Pressed")}
+                        onPress={() => navigation.navigate("JoinLeagues", { user })}
                     >
                         Join A League
                     </Button>
@@ -72,10 +74,21 @@ const LeagueScreen = () => {
                     {leagues?.map((league) => (
                         <View key={league.id} style={styles.leagueContainer}>
                             <Text style={styles.leagueName}>{league.league.league_name}</Text>
-                            <Text>League Number {league.league.league_number}</Text>
-                            <LeagueAvatar avatarSource={league.league.league_image} />
-                            <Text>League Manager: {league.league.leagueAdmin.nickName}</Text>
+                            <Text>League Number: {league.league.league_number}</Text>
+                            <LeagueAvatar avatarSource={league.league?.league_image} />
+                            {/* <Text>League Manager: {league.league?.leagueAdmin?.nickName}</Text> */}
+                            <Text>League Manager: {league.league?.leagueAdmin?.nickName}</Text>
                             <Text>Players:</Text>
+                            <View style={styles.playersContainer}>
+                                {leaguePlayers?.map((player) => (
+                                    <View key={player.id}>
+                                        <UserAvatar avatarSource={player.User.image} />
+                                        <Text key={player.id} style={styles.singlePlayer}>
+                                            {player.User.nickName}
+                                        </Text>
+                                    </View>
+                                ))}
+                            </View>
                             <AppButton
                                 color={colors.Accent}
                                 width="70%"
@@ -140,6 +153,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 20,
+    },
+    playersContainer: {
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        width: "100%",
+    },
+    singlePlayer: {
+        textAlign: "center",
+        fontSize: 12,
+        marginTop: 5, // add some margin to the top
+        // marginHorizontal: 15, // add some margin to the right and left
     },
 });
 

@@ -61,7 +61,7 @@ const LeaguesRegistrationScreen = ({ navigation }) => {
                     topOffset: 60,
                     type: "success",
                     text1: "League Created",
-                    text2: "Please wait while we redirect you to the home page",
+                    text2: "Please wait while we redirect you to the League page",
                 });
                 setTimeout(() => {
                     navigation.navigate("MyLeagues", { screen: "LeagueTab" });
@@ -101,7 +101,9 @@ const LeaguesRegistrationScreen = ({ navigation }) => {
                                 autoCapitalize="none"
                                 autoCorrect={false}
                             />
-                            {touched.leagueN && errors.leagueN && <Text style={styles.error}>{errors.leagueN}</Text>}
+                            {touched.leagueName && errors.leagueName && (
+                                <Text style={styles.error}>{errors.leagueN}</Text>
+                            )}
                             <Button
                                 mode="contained"
                                 width="80%"

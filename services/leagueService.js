@@ -23,7 +23,12 @@ export async function createLeague(formData) {
     return res;
 }
 
+export async function joinLeague(leagueNumber, userId) {
+    return http.put(`${SERVER_URL}/api/leagues/joinLeague/${leagueNumber}/${userId}`);
+}
+
 export default {
     getMyLeagues,
     createLeague,
+    joinLeague,
 };
