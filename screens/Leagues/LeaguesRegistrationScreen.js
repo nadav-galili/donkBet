@@ -129,8 +129,6 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
     },
     regitrationContainer: {
-        // flex: 1,
-        // justifyContent: "center",
         alignItems: "center",
         marginTop: 50,
     },

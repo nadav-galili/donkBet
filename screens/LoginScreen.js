@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ActivityIndicator, StyleSheet, View, Text, TextInput, SafeAreaView, ImageBackground } from "react-native";
 import { colors } from "../colors";
 import AppButton from "../components/AppButton";
+import AppLogo from "../components/AppLogo";
 import userService from "../services/userService";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -13,14 +14,12 @@ const validationSchema = Yup.object().shape({
 });
 
 const LoginScreen = ({ navigation }) => {
-    const [image, setImage] = useState(null);
     const initialValues = { password: "", nickname: "" };
     const [error, setError] = useState(null);
     const [formikState, setFormikState] = useState(initialValues);
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (values) => {
-        console.log("sssss", values);
         try {
             const res = await userService.login(values.nickname, values.password);
             if (res.token) {
@@ -37,15 +36,16 @@ const LoginScreen = ({ navigation }) => {
                     autoHide: true,
                 });
             }
-            console.log("🚀 ~ file: LoginScreen.js:25 ~ handleSubmit ~ error", error);
             setError(error.message);
         }
     };
 
     return (
         <SafeAreaView style={styles.ImageBack}>
-            <ImageBackground source={require("../assets/liquid-cheese.png")} style={styles.ImageBack}>
+            <ImageBackground source={require("../assets/spaceChips.png")} style={styles.ImageBack} blurRadius={2}>
                 <View style={styles.container}>
+                    <AppLogo />
+
                     <Text style={styles.title}>Login to your account</Text>
                     <Formik initialValues={formikState} onSubmit={handleSubmit} validationSchema={validationSchema}>
                         {({ handleChange, handleSubmit, errors, setFieldTouched, touched }) => (
@@ -102,6 +102,8 @@ const styles = StyleSheet.create({
     },
     comment: {
         fontSize: 12,
+        color: colors.MediumBlue,
+        backgroundColor: "#fff",
     },
     error: {
         fontSize: 10,
@@ -113,6 +115,7 @@ const styles = StyleSheet.create({
         flex: 1,
         resizeMode: "cover",
         justifyContent: "center",
+        resizeMode: "contain",
     },
 
     form: {
@@ -127,14 +130,16 @@ const styles = StyleSheet.create({
         marginBottom: 40,
         color: colors.white,
         alignSelf: "center",
+        fontFamily: "serif",
     },
     label: {
         fontSize: 18,
         fontWeight: "bold",
         marginBottom: 5,
-        color: colors.Accent,
+        color: colors.white,
         alignSelf: "flex-end",
         paddingLeft: 50,
+        fontFamily: "Roboto",
     },
     input: {
         width: 300,

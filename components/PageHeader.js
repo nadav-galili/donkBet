@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
         fontSize: 24,
         fontWeight: "bold",
+        fontFamily: "serif",
     },
 });
 
