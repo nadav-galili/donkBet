@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
         marginVertical: 30,
         fontWeight: "700",
         textDecorationLine: "underline",
-        fontFamily: "Lato-Regular",
+        fontFamily: "serif",
     },
     image: {
         width: 120,

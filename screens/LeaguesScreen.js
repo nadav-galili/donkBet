@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View, ScrollView, SafeAreaView, ImageBackground } from "react-native";
 import { Button, Text } from "react-native-paper";
 
+import SelectPlayersScreen from "./Games/SelectPlayersScreen";
 import { useNavigation } from "@react-navigation/native";
 import userService from "../services/userService";
 import leagueService from "../services/leagueService";
@@ -52,9 +53,9 @@ const LeagueScreen = () => {
                             textColor={colors.Accent}
                             onPress={() => navigation.navigate("LeaguesRegistration", { user })}
                             style={styles.button2}
-                            labelStyle={{ fontSize: 9 }}
+                            labelStyle={{ fontSize: 7 }}
                         >
-                            Create New League
+                            +Create New League
                         </Button>
                         <Button
                             mode="contained"
@@ -105,7 +106,9 @@ const LeagueScreen = () => {
                                     color={colors.Complementary}
                                     width="70%"
                                     text="Start A New Game"
-                                    onPress={() => console.log("start a new game clicked")}
+                                    onPress={() =>
+                                        navigation.navigate("SelectPlayers", { user, league, leaguePlayers })
+                                    }
                                 />
                             </View>
                         ))}
@@ -123,9 +126,11 @@ const styles = StyleSheet.create({
     },
     button1: {
         backgroundColor: colors.primary,
+        width: "40%",
     },
     button2: {
         backgroundColor: colors.LightGreen,
+        width: "40%",
     },
 
     container: {
