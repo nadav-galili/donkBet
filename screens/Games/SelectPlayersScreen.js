@@ -1,19 +1,27 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text, SafeAreaView, ScrollView, ImageBackground } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import UserAvatar from "../../components/UserAvatar";
 import AppLogo from "../../components/AppLogo";
 import PageHeader from "../../components/PageHeader";
 import { colors } from "../../colors";
 import PlayerCard from "./PlayerSelectCard";
 import { Button } from "react-native-paper";
+import gameService from "../../services/gameService";
 
 const SelectPlayersScreen = () => {
+    const navigation = useNavigation();
     const route = useRoute();
-
-    const { user, league, leaguePlayers } = route.params;
+    const { user, leagues, leaguePlayers } = route.params;
     const [selected, setSelected] = useState([]);
     console.log("🚀 ~ file: SelectPlayersScreen.js:16 ~ SelectPlayersScreen ~ selected:", selected);
+
+    const openNewGame = () => {
+        gameService.newGame(selected, leagues, leaguePlayers).then((res) => {
+            console.log("🚀 ~ file: SelectPlayersScreen.js:19 ~ gameService.newGame ~ res", res);
+        });
+        navigation.navigate("NewGame", { user, leagues, leaguePlayers, selected });
+    };
 
     const handlePlayerSelection = (playerId) => {
         setSelected((prevSelected) => {
@@ -41,10 +49,10 @@ const SelectPlayersScreen = () => {
                         <Button
                             mode="contained"
                             textColor={colors.white}
-                            onPress={() => console.log("aaa", selected)}
+                            onPress={() => openNewGame()}
                             style={styles.button}
                             labelStyle={{ fontSize: 11 }}
-                            disabled={selected.length <= 2}
+                            disabled={selected.length <= 1}
                         >
                             <Text>Continue To Game</Text>
                         </Button>

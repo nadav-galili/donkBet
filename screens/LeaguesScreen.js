@@ -107,7 +107,11 @@ const LeagueScreen = () => {
                                     width="70%"
                                     text="Start A New Game"
                                     onPress={() =>
-                                        navigation.navigate("SelectPlayers", { user, league, leaguePlayers })
+                                        navigation.navigate("SelectPlayers", {
+                                            user,
+                                            leagues,
+                                            leaguePlayers,
+                                        })
                                     }
                                 />
                             </View>
