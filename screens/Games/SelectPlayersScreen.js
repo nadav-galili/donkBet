@@ -6,12 +6,12 @@ import AppLogo from "../../components/AppLogo";
 import PageHeader from "../../components/PageHeader";
 import { colors } from "../../colors";
 import PlayerCard from "./PlayerSelectCard";
+import { Button } from "react-native-paper";
 
 const SelectPlayersScreen = () => {
     const route = useRoute();
-    const user = route.params.user;
-    const league = route.params.league;
-    const leaguePlayers = route.params.leaguePlayers;
+
+    const { user, league, leaguePlayers } = route.params;
     const [selected, setSelected] = useState([]);
     console.log("🚀 ~ file: SelectPlayersScreen.js:16 ~ SelectPlayersScreen ~ selected:", selected);
 
@@ -37,9 +37,20 @@ const SelectPlayersScreen = () => {
                     </View>
                     <View style={styles.headerContainer}>
                         <PageHeader text="Select Players" color={colors.darkPurple} />
+                        <Text>Select at least 3 players to play</Text>
+                        <Button
+                            mode="contained"
+                            textColor={colors.white}
+                            onPress={() => console.log("aaa", selected)}
+                            style={styles.button}
+                            labelStyle={{ fontSize: 11 }}
+                            disabled={selected.length <= 2}
+                        >
+                            <Text>Continue To Game</Text>
+                        </Button>
                     </View>
-                    {leaguePlayers?.map((player) => {
-                        return (
+                    <ScrollView contentContainerStyle={styles.contentContainer}>
+                        {leaguePlayers?.map((player) => (
                             <View key={player.id} style={styles.playerCardContainer}>
                                 <PlayerCard
                                     player={player}
@@ -47,8 +58,8 @@ const SelectPlayersScreen = () => {
                                     onSelect={handlePlayerSelection}
                                 />
                             </View>
-                        );
-                    })}
+                        ))}
+                    </ScrollView>
                 </ScrollView>
             </ImageBackground>
         </SafeAreaView>
@@ -56,6 +67,16 @@ const SelectPlayersScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    button: {
+        width: 200,
+        height: 50,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 10,
+        borderColor: colors.Accent,
+        borderWidth: 2,
+        marginVertical: 20,
+    },
     container: {
         flex: 1,
     },
@@ -73,11 +94,16 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginTop: 20,
     },
-    playerCardContainer: {
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 20,
+    contentContainer: {
+        paddingVertical: 20,
         flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "center",
+    },
+    playerCardContainer: {
+        width: "50%",
+        paddingHorizontal: 10,
+        marginBottom: 20,
     },
 });
 

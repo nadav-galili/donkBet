@@ -1,9 +1,9 @@
 import React from "react";
 import { View, StyleSheet, Image, TouchableOpacity, Text } from "react-native";
 import { SERVER_URL } from "../../config";
+import { colors } from "../../colors";
 
 const PlayerCard = ({ player, selected, onSelect }) => {
-    console.log("🚀 ~ file: PlayerSelectCard.js:6 ~ PlayerCard ~ selected:", selected);
     const handleSelected = () => {
         onSelect(player.id);
     };
@@ -11,13 +11,13 @@ const PlayerCard = ({ player, selected, onSelect }) => {
     return (
         <View style={[styles.card, selected && styles.selectedCard]}>
             <View style={styles.avatarContainer}>
-                <Image style={styles.avatar} source={{ uri: `${SERVER_URL}${player.User.image}` }} />
-                <Text style={styles.text}>{player.User.nickName}</Text>
-
-                <TouchableOpacity style={styles.button} onPress={handleSelected}>
-                    <Text style={styles.buttonText}>{selected ? "Remove" : "Select"}</Text>
-                </TouchableOpacity>
+                <Image style={styles.avatar} source={{ uri: `${SERVER_URL}/${player.User.image}` }} />
             </View>
+            <Text style={styles.text}>{player.User.nickName}</Text>
+
+            <TouchableOpacity style={[styles.button, selected && styles.selectedButton]} onPress={handleSelected}>
+                <Text style={styles.buttonText}>{selected ? "Remove" : "Select"}</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -28,9 +28,10 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 20,
         alignItems: "center",
+        justifyContent: "center",
     },
     selectedCard: {
-        backgroundColor: "green",
+        backgroundColor: colors.green,
     },
     avatarContainer: {
         width: 100,
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#f1f1f1",
         justifyContent: "center",
         alignItems: "center",
-        marginBottom: 20,
+        marginBottom: 10,
     },
     avatar: {
         width: 80,
@@ -51,6 +52,10 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingVertical: 10,
         paddingHorizontal: 15,
+        marginTop: 10,
+    },
+    selectedButton: {
+        backgroundColor: "red",
     },
     buttonText: {
         color: "#ffffff",
@@ -58,7 +63,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     text: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: "bold",
         marginBottom: 10,
         textTransform: "capitalize",
