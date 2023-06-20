@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, SafeAreaView, ScrollView, ImageBackground } from "react-native";
+import { View, Dimensions, StyleSheet, Text, SafeAreaView, ScrollView, ImageBackground } from "react-native";
+
 import { useRoute, useNavigation } from "@react-navigation/native";
+import Carousel from "react-native-snap-carousel";
+
 import UserAvatar from "../../components/UserAvatar";
 import AppLogo from "../../components/AppLogo";
 import PageHeader from "../../components/PageHeader";
@@ -13,19 +16,22 @@ const SelectPlayersScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { user, leagues, leaguePlayers } = route.params;
+    console.log("🚀 ~ file: SelectPlayersScreen.js:19 ~ SelectPlayersScreen ~ leaguePlayers:", leaguePlayers);
     const [selected, setSelected] = useState([]);
     console.log("🚀 ~ file: SelectPlayersScreen.js:16 ~ SelectPlayersScreen ~ selected:", selected);
 
-    const openNewGame = () => {
-        gameService.newGame(selected, leagues, leaguePlayers).then((res) => {
-            console.log("🚀 ~ file: SelectPlayersScreen.js:19 ~ gameService.newGame ~ res", res);
-        });
+    const openNewGame = async () => {
+        const { data } = await gameService.newGame(selected, leagues, leaguePlayers);
+        console.log("🚀 ~ file: SelectPlayersScreen.js:24 ~ openNewGame ~ data:", data);
         navigation.navigate("NewGame", { user, leagues, leaguePlayers, selected });
     };
 
+    const windowWidth = Dimensions.get("window").width;
     const handlePlayerSelection = (playerId) => {
+        console.log("🚀 ~ file: SelectPlayersScreen.js:31 ~ handlePlayerSelection ~ playerId:", playerId);
         setSelected((prevSelected) => {
             if (prevSelected.includes(playerId)) {
+                console.log("🚀 ~ file: SelectPlayersScreen.js:33 ~ setSelected ~ playerId:", playerId);
                 // If the ID is already selected, remove it from the array
                 return prevSelected.filter((id) => id !== playerId);
             } else {
@@ -57,17 +63,22 @@ const SelectPlayersScreen = () => {
                             <Text>Continue To Game</Text>
                         </Button>
                     </View>
-                    <ScrollView contentContainerStyle={styles.contentContainer}>
-                        {leaguePlayers?.map((player) => (
-                            <View key={player.id} style={styles.playerCardContainer}>
+
+                    <View style={styles.carouselContainer}>
+                        <Carousel
+                            layout={"default"}
+                            data={leaguePlayers}
+                            sliderWidth={windowWidth}
+                            itemWidth={windowWidth - 250} // or whatever size you want the cards to be
+                            renderItem={({ item: player }) => (
                                 <PlayerCard
                                     player={player}
-                                    selected={selected.includes(player.id)}
+                                    selected={selected.includes(player?.User?.id)}
                                     onSelect={handlePlayerSelection}
                                 />
-                            </View>
-                        ))}
-                    </ScrollView>
+                            )}
+                        />
+                    </View>
                 </ScrollView>
             </ImageBackground>
         </SafeAreaView>
@@ -88,11 +99,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+
     avatar: {
         alignItems: "flex-end",
         marginTop: 30,
         marginRight: 20,
     },
+    carouselContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 40,
+    },
+
     headerContainer: {
         alignItems: "center",
         backgroundColor: colors.white,
@@ -109,9 +128,9 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     playerCardContainer: {
-        width: "50%",
-        paddingHorizontal: 10,
-        marginBottom: 20,
+        // width: "20%",
+        // paddingHorizontal: 10,
+        // marginBottom: 20,
     },
 });
 

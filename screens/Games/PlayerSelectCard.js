@@ -5,7 +5,7 @@ import { colors } from "../../colors";
 
 const PlayerCard = ({ player, selected, onSelect }) => {
     const handleSelected = () => {
-        onSelect(player.id);
+        onSelect(player.User?.id);
     };
 
     return (
@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
         backgroundColor: colors.green,
     },
     avatarContainer: {
-        width: 100,
-        height: 100,
+        width: 50,
+        height: 50,
         borderRadius: 50,
         backgroundColor: "#f1f1f1",
         justifyContent: "center",
@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     avatar: {
-        width: 80,
-        height: 80,
+        width: 60,
+        height: 60,
         borderRadius: 40,
     },
     button: {
@@ -54,16 +54,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginTop: 10,
     },
+
     selectedButton: {
         backgroundColor: "red",
     },
     buttonText: {
         color: "#ffffff",
-        fontSize: 16,
+        fontSize: 10,
         fontWeight: "bold",
     },
     text: {
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: "bold",
         marginBottom: 10,
         textTransform: "capitalize",
