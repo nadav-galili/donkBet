@@ -16,14 +16,13 @@ const SelectPlayersScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { user, leagues, leaguePlayers } = route.params;
-    console.log("🚀 ~ file: SelectPlayersScreen.js:19 ~ SelectPlayersScreen ~ leaguePlayers:", leaguePlayers);
     const [selected, setSelected] = useState([]);
-    console.log("🚀 ~ file: SelectPlayersScreen.js:16 ~ SelectPlayersScreen ~ selected:", selected);
 
     const openNewGame = async () => {
         const { data } = await gameService.newGame(selected, leagues, leaguePlayers);
-        console.log("🚀 ~ file: SelectPlayersScreen.js:24 ~ openNewGame ~ data:", data);
-        navigation.navigate("NewGame", { user, leagues, leaguePlayers, selected });
+        const { GameDetails, game } = data;
+        console.log("🚀 ~ file: SelectPlayersScreen.js:55 ~ openNewGame ~ GameDetails:", GameDetails);
+        navigation.navigate("NewGame", { game, user, leagues, leaguePlayers, selected, GameDetails });
     };
 
     const windowWidth = Dimensions.get("window").width;
