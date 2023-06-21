@@ -20,17 +20,15 @@ const SelectPlayersScreen = () => {
 
     const openNewGame = async () => {
         const { data } = await gameService.newGame(selected, leagues, leaguePlayers);
-        const { GameDetails, game } = data;
-        console.log("🚀 ~ file: SelectPlayersScreen.js:55 ~ openNewGame ~ GameDetails:", GameDetails);
-        navigation.navigate("NewGame", { game, user, leagues, leaguePlayers, selected, GameDetails });
+        console.log("sssssss", data);
+        const { GameDetails, game, usersGames } = data;
+        navigation.navigate("NewGame", { game, user, leagues, leaguePlayers, selected, GameDetails, usersGames });
     };
 
     const windowWidth = Dimensions.get("window").width;
     const handlePlayerSelection = (playerId) => {
-        console.log("🚀 ~ file: SelectPlayersScreen.js:31 ~ handlePlayerSelection ~ playerId:", playerId);
         setSelected((prevSelected) => {
             if (prevSelected.includes(playerId)) {
-                console.log("🚀 ~ file: SelectPlayersScreen.js:33 ~ setSelected ~ playerId:", playerId);
                 // If the ID is already selected, remove it from the array
                 return prevSelected.filter((id) => id !== playerId);
             } else {
