@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ImageBackground, View, StyleSheet, FlatList, Text, SafeAreaView } from "react-native";
 import { Button } from "react-native-paper";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -8,12 +8,26 @@ import AppLogo from "../../components/AppLogo";
 import UserAvatar from "../../components/UserAvatar";
 import GameInfo from "./GameInfo";
 import PlayerAvatar from "../../components/PlayerAvatar";
+import gameService from "../../services/gameService";
 
 const NewGame = () => {
     const route = useRoute();
+    const [gamesData, setGamesData] = useState(usersGames);
+
+    //get my userGames
+    // const useEffect = () => {
 
     const { user, game, leagues, leaguePlayers, GameDetails, usersGames } = route.params;
     console.log("🚀 ~ flllllllllllllllllllllllllllllGames:", usersGames);
+
+    const addBuyInToPlayer = async (playerId, gameId, buyInAmount, leagueId) => {
+        try {
+            const { data } = await gameService.addBuyInToPlayer(playerId, gameId, buyInAmount, leagueId);
+            console.log("🚀 ~ file: NewGameScreen.js ~ line 55 ~ addBuyInToPlayer ~ data", data);
+        } catch (error) {
+            console.log("🚀 ~ file: NewGameScreen.js ~ line 57 ~ addBuyInToPlayer ~ error", error);
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -48,7 +62,8 @@ const NewGame = () => {
                                 size={25}
                                 style={{ marginLeft: 10 }}
                                 color={colors.green}
-                                onPress={() => console.log(`cash in ${item?.User?.nickName}`)}
+                                // onPress={() => console.log(`cash in ${item?.User?.nickName}`)}
+                                onPress={() => addBuyInToPlayer(item?.User?.id, game.id, 100, item?.league_id)}
                             />
                             <FontAwesome
                                 name="times-circle"
