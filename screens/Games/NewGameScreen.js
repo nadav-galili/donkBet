@@ -1,8 +1,8 @@
 import React from "react";
-import { ImageBackground, View, StyleSheet, FlatList, Text, SafeAreaView, TextInput } from "react-native";
+import { ImageBackground, View, StyleSheet, FlatList, Text, SafeAreaView } from "react-native";
+import { Button } from "react-native-paper";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { Button } from "react-native-paper";
 import { colors } from "../../colors";
 import AppLogo from "../../components/AppLogo";
 import UserAvatar from "../../components/UserAvatar";
@@ -17,7 +17,7 @@ const NewGame = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground source={require("../../assets/pokerChips4.png")} style={styles.container} blurRadius={1}>
+            <ImageBackground source={require("../../assets/spaceChips3.png")} style={styles.container}>
                 <FlatList
                     data={usersGames}
                     keyExtractor={(item) => item.id.toString()}
@@ -33,10 +33,10 @@ const NewGame = () => {
                             <View style={styles.gameHeaders}>
                                 <Text style={styles.headersText}>Player</Text>
                                 <Text style={styles.headersText}>+/- Buy-In</Text>
-                                <Text style={{ color: "white", fontSize: 12 }}>+/- Buy-In</Text>
-                                <Text style={styles.headersLongText}>Total Buy-Ins</Text>
-                                <Text style={styles.headersLongText}>Cash In Hand</Text>
-                                <Text style={styles.headersText}>Profit</Text>
+
+                                <Text style={styles.headersText}>Total Buy-Ins</Text>
+                                <Text style={styles.headersLongText}>Cash Out Player</Text>
+                                {/* <Text style={styles.headersText}>Profit</Text> */}
                             </View>
                         </>
                     }
@@ -57,12 +57,22 @@ const NewGame = () => {
                                 color={"red"}
                                 onPress={() => console.log(`cancel buy-in for ${item?.User?.nickName}`)}
                             />
-                            <Text style={styles.cashOut}>cash out</Text>
 
                             <Text style={styles.gameInfoText}>{item?.buy_ins_amount}</Text>
+                            {/* <Text style={styles.cas/>hOut}>cash out</Text> */}
+                            <Button
+                                mode="contained"
+                                labelStyle={{ fontSize: 6.2, color: colors.white }}
+                                onPress={() => console.log(`cash out for ${item?.User?.nickName}`)}
+                                style={styles.cashOut}
+                            >
+                                cash out
+                            </Button>
 
-                            <TextInput style={styles.cashInHand}>{item?.cash_in_hand}</TextInput>
-                            <Text style={styles.gameInfoText}>{item?.profit}</Text>
+                            {/* <TextInput style={styles.cashInHand} keyboardType="numeric">
+                                {item?.cash_in_hand}
+                            </TextInput> */}
+                            {/* <Text style={styles.gameInfoText}>{item?.profit}</Text> */}
                         </View>
                     )}
                 />
@@ -89,50 +99,49 @@ const styles = StyleSheet.create({
     },
     cashOut: {
         color: colors.darkPurple,
-        fontSize: 10,
 
-        fontWeight: "bold",
-        width: "15%",
+        // fontWeight: "bold",
+        width: "22%",
     },
     container: {
         flex: 1,
-        backgroundColor: colors.white,
+        // backgroundColor: colors.white,
     },
     gameHeaders: {
         flexDirection: "row-reverse",
         justifyContent: "space-around",
         marginTop: 20,
-        marginBottom: 10,
+        paddingVertical: 10,
+        // marginBottom: 10,
 
-        padding: 10,
-        backgroundColor: colors.white,
+        // padding: 10,
+        backgroundColor: colors.Accent,
     },
     gameInfoContainer: {
         flexDirection: "row-reverse",
-        justifyContent: "space-between",
-        marginHorizontal: 5,
+        justifyContent: "space-around",
+        // marginHorizontal: 5,
         paddingVertical: 10,
-        paddingLeft: 10,
+        // paddingLeft: 10,
         alignItems: "center",
         backgroundColor: colors.white,
         borderBottomWidth: 1,
         borderBottomColor: colors.darkPurple,
     },
     gameInfoText: {
-        // color: colors.darkPurple,
-        fontSize: 9,
+        fontSize: 10,
         fontWeight: "bold",
-        width: "10%",
+        // width: "15%",
     },
     headersText: {
-        color: colors.blue,
+        color: colors.white,
         fontSize: 12,
-        marginRight: 10,
+        // marginRight: 10,
         fontWeight: "bold",
     },
     headersLongText: {
-        color: colors.blue,
-        fontSize: 10,
+        color: colors.white,
+        fontSize: 7,
         width: "15%",
         fontWeight: "bold",
     },

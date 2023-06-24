@@ -1,17 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View, ImageBackground, SafeAreaView, Image, TouchableOpacity } from "react-native";
 import { Button, Text } from "react-native-paper";
-import { useFonts } from "expo-font";
+import userService from "../services/userService";
 
 import { colors } from "../colors";
 
 export default function HomeScreen({ navigation }) {
-    // const [fontsLoaded] = useFonts({
-    //     "Lato-Regular": require("../assets/fonts/Lato-Regular.ttf"),
-    // });
-    // if (!fontsLoaded) {
-    //     return null; // or a loading component
-    // }
+    useEffect(() => {
+        console.log("Navigation.js: useEffect");
+        async function getUserDetails() {
+            try {
+                const me = await userService.getUserDetails();
+
+                if (me.data) {
+                    //navigate to myleagues
+                    navigation.navigate("MyLeagues");
+                }
+            } catch (error) {
+                console.log("Navigation.js: useEffect: getUserDetails: error: ", error);
+            }
+        }
+        getUserDetails();
+    }, []);
 
     return (
         <SafeAreaView style={styles.container}>

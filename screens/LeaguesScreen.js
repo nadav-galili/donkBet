@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View, ScrollView, SafeAreaView, ImageBackground } from "react-native";
 import { Button, Text } from "react-native-paper";
 
-import SelectPlayersScreen from "./Games/SelectPlayersScreen";
+import ShareIcon from "./common/Share";
 import { useNavigation } from "@react-navigation/native";
 import userService from "../services/userService";
 import leagueService from "../services/leagueService";
@@ -11,6 +11,7 @@ import UserAvatar from "../components/UserAvatar";
 import LeagueAvatar from "../components/LeagueAvatar";
 import AppButton from "../components/AppButton";
 import AppLogo from "../components/AppLogo";
+import { SERVER_URL } from "../config";
 import { colors } from "../colors";
 
 const LeagueScreen = () => {
@@ -80,10 +81,26 @@ const LeagueScreen = () => {
                         {leagues?.map((league) => (
                             <View key={league.id} style={styles.leagueContainer}>
                                 <Text style={styles.leagueName}>{league.league.league_name}</Text>
-                                <Text>League Number: {league.league.league_number}</Text>
+                                <Text>
+                                    {" "}
+                                    <Text style={{ fontWeight: "bold" }}>League Number: </Text>
+                                    {league.league.league_number}
+                                </Text>
+                                <View style={styles.share}>
+                                    <ShareIcon
+                                        message={`You've been invited to Poker Donkey League ${league.league.league_name}:https://${SERVER_URL}{/league/${league.league.league_number}`}
+                                    />
+                                    <Text style={{ fontSize: 10, textAlignVertical: "center", paddingHorizontal: 7 }}>
+                                        Invite friends to this league
+                                    </Text>
+                                </View>
                                 <LeagueAvatar avatarSource={league.league?.league_image} />
-                                <Text>League Manager: {league.league?.leagueAdmin?.nickName}</Text>
-                                <Text>Players:</Text>
+                                <Text>
+                                    {" "}
+                                    <Text style={{ fontWeight: "bold" }}>League Manager: </Text>
+                                    {league.league?.leagueAdmin?.nickName}
+                                </Text>
+                                <Text style={{ fontWeight: "bold", marginTop: 10 }}>Players:</Text>
                                 <View style={styles.playersContainer}>
                                     {leaguePlayers?.map((player) => (
                                         <View key={player.id}>
@@ -195,6 +212,11 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginTop: 5, // add some margin to the top
         // marginHorizontal: 15, // add some margin to the right and left
+    },
+    share: {
+        flexDirection: "row",
+        justifyContent: "center",
+        width: "100%",
     },
 });
 

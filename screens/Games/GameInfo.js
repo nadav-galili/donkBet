@@ -13,18 +13,17 @@ const GameInfo = ({ gameId, createdAt, updatedAt }) => {
         second: "2-digit",
     });
 
-    const endDate = new Date(updatedAt).toLocaleString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
+    const endDate = new Date(updatedAt).toLocaleTimeString("en-GB", {
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
+        hour12: false,
+        timeZone: "UTC",
     });
+
     return (
         <View style={styles.headerContainer}>
-            <PageHeader text="New Game" color={colors.darkPurple} />
-            <Text>Game number: {gameId}</Text>
+            <PageHeader text={`Game Id: ${gameId}`} color={colors.darkPurple} />
             <View style={styles.datesContainer}>
                 <Text style={styles.date}>Started At: {startDate}</Text>
                 <Text style={styles.date}>Updated At: {endDate}</Text>
