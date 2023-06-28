@@ -4,7 +4,7 @@ import PageHeader from "../../components/PageHeader";
 import { colors } from "../../colors";
 
 const GameInfo = ({ gameId, createdAt, updatedAt }) => {
-    const startDate = new Date(createdAt).toLocaleString("en-GB", {
+    const startDate = new Date(createdAt).toLocaleTimeString("en-GB", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",

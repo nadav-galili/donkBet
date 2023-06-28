@@ -9,7 +9,12 @@ export function addBuyInToPlayer(playerId, gameId, buyInAmount, leagueId) {
     return http.post(`${SERVER_URL}/api/games/addBuyInToPlayer`, { playerId, gameId, buyInAmount, leagueId });
 }
 
+export function getUserGamesByGameId(gameId) {
+    return http.get(`${SERVER_URL}/api/games/getUserGamesByGameId/${gameId}`);
+}
+
 export default {
     newGame,
     addBuyInToPlayer,
+    getUserGamesByGameId,
 };

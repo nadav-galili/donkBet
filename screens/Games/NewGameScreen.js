@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ImageBackground, View, StyleSheet, FlatList, Text, SafeAreaView } from "react-native";
 import { Button } from "react-native-paper";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { colors } from "../../colors";
 import AppLogo from "../../components/AppLogo";
@@ -13,16 +13,26 @@ import gameService from "../../services/gameService";
 const NewGame = () => {
     const route = useRoute();
     const [gamesData, setGamesData] = useState(usersGames);
-
-    //get my userGames
-    // const useEffect = () => {
-
+    const [changedUserBuyIns, setchangedUserBuyIns] = useState(false);
     const { user, game, leagues, leaguePlayers, GameDetails, usersGames } = route.params;
-    console.log("🚀 ~ flllllllllllllllllllllllllllllGames:", usersGames);
+
+    useEffect(() => {
+        const getUserGames = async () => {
+            try {
+                const { data } = await gameService.getUserGamesByGameId(game.id);
+                console.log("🚀 ~ file: NewGameScreen.js ~ line 29 ~ getUserGames ~ data", data);
+                setGamesData(data);
+            } catch (error) {
+                console.log("🚀 ~ f/ile: NewGameScreen.js ~ line 31 ~ getUserGames ~ error", error);
+            }
+        };
+        getUserGames();
+    }, [changedUserBuyIns]);
 
     const addBuyInToPlayer = async (playerId, gameId, buyInAmount, leagueId) => {
         try {
             const { data } = await gameService.addBuyInToPlayer(playerId, gameId, buyInAmount, leagueId);
+            setchangedUserBuyIns(!changedUserBuyIns);
             console.log("🚀 ~ file: NewGameScreen.js ~ line 55 ~ addBuyInToPlayer ~ data", data);
         } catch (error) {
             console.log("🚀 ~ file: NewGameScreen.js ~ line 57 ~ addBuyInToPlayer ~ error", error);
@@ -32,65 +42,71 @@ const NewGame = () => {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require("../../assets/spaceChips3.png")} style={styles.container}>
-                <FlatList
-                    data={usersGames}
-                    keyExtractor={(item) => item.id.toString()}
-                    ListHeaderComponent={
-                        <>
-                            <View style={styles.avatar}>
-                                {user?.nickName && <UserAvatar avatarSource={user.image} />}
-                            </View>
-                            <View style={styles.logoContainer}>
-                                <AppLogo />
-                            </View>
-                            <GameInfo gameId={game.id} createdAt={game.created_at} updatedAt={game.updated_at} />
-                            <View style={styles.gameHeaders}>
-                                <Text style={styles.headersText}>Player</Text>
-                                <Text style={styles.headersText}>+/- Buy-In</Text>
+                {gamesData?.userGames?.length > 0 ? (
+                    <FlatList
+                        data={gamesData.userGames}
+                        keyExtractor={(item) => item.id.toString()}
+                        ListHeaderComponent={
+                            <>
+                                <View style={styles.avatar}>
+                                    {user?.nickName && <UserAvatar avatarSource={user.image} />}
+                                </View>
+                                <View style={styles.logoContainer}>
+                                    <AppLogo />
+                                </View>
+                                <GameInfo gameId={game.id} createdAt={game.created_at} updatedAt={game.updated_at} />
+                                <View style={styles.gameHeaders}>
+                                    <Text style={styles.headersText}>Player</Text>
+                                    <Text style={styles.headersText}>+/- Buy-In</Text>
 
-                                <Text style={styles.headersText}>Total Buy-Ins</Text>
-                                <Text style={styles.headersLongText}>Cash Out Player</Text>
-                                {/* <Text style={styles.headersText}>Profit</Text> */}
+                                    <Text style={styles.headersText}>Total Buy-Ins</Text>
+                                    <Text style={styles.headersLongText}>Cash Out Player</Text>
+                                    {/* <Text style={styles.headersText}>Profit</Text> */}
+                                </View>
+                            </>
+                        }
+                        renderItem={({ item }) => (
+                            <View style={styles.gameInfoContainer}>
+                                <PlayerAvatar avatarSource={item?.User?.image} playerName={item?.User?.nickName} />
+                                <FontAwesome
+                                    name="money"
+                                    size={25}
+                                    style={{ marginLeft: 10 }}
+                                    color={colors.green}
+                                    // onPress={() => console.log(`cash in ${item?.User?.nickName}`)}
+                                    onPress={() => addBuyInToPlayer(item?.User?.id, game.id, 100, item?.league_id)}
+                                />
+                                <FontAwesome
+                                    name="times-circle"
+                                    size={22}
+                                    style={{ width: "5%" }}
+                                    color={"red"}
+                                    onPress={() => console.log(`cancel buy-in for ${item?.User?.nickName}`)}
+                                />
+
+                                <Text style={styles.gameInfoText}>{item?.buy_ins_amount}</Text>
+                                {/* <Text style={styles.cas/>hOut}>cash out</Text> */}
+                                <Button
+                                    mode="contained"
+                                    labelStyle={{ fontSize: 6.2, color: colors.white }}
+                                    onPress={() => console.log(`cash out for ${item?.User?.nickName}`)}
+                                    style={styles.cashOut}
+                                >
+                                    cash out
+                                </Button>
+
+                                {/* <TextInput style={styles.cashInHand} keyboardType="numeric">
+                                    {item?.cash_in_hand}
+                                </TextInput> */}
+                                {/* <Text style={styles.gameInfoText}>{item?.profit}</Text> */}
                             </View>
-                        </>
-                    }
-                    renderItem={({ item }) => (
-                        <View style={styles.gameInfoContainer}>
-                            <PlayerAvatar avatarSource={item?.User?.image} playerName={item?.User?.nickName} />
-                            <FontAwesome
-                                name="money"
-                                size={25}
-                                style={{ marginLeft: 10 }}
-                                color={colors.green}
-                                // onPress={() => console.log(`cash in ${item?.User?.nickName}`)}
-                                onPress={() => addBuyInToPlayer(item?.User?.id, game.id, 100, item?.league_id)}
-                            />
-                            <FontAwesome
-                                name="times-circle"
-                                size={22}
-                                style={{ width: "5%" }}
-                                color={"red"}
-                                onPress={() => console.log(`cancel buy-in for ${item?.User?.nickName}`)}
-                            />
-
-                            <Text style={styles.gameInfoText}>{item?.buy_ins_amount}</Text>
-                            {/* <Text style={styles.cas/>hOut}>cash out</Text> */}
-                            <Button
-                                mode="contained"
-                                labelStyle={{ fontSize: 6.2, color: colors.white }}
-                                onPress={() => console.log(`cash out for ${item?.User?.nickName}`)}
-                                style={styles.cashOut}
-                            >
-                                cash out
-                            </Button>
-
-                            {/* <TextInput style={styles.cashInHand} keyboardType="numeric">
-                                {item?.cash_in_hand}
-                            </TextInput> */}
-                            {/* <Text style={styles.gameInfoText}>{item?.profit}</Text> */}
-                        </View>
-                    )}
-                />
+                        )}
+                    />
+                ) : (
+                    <View>
+                        <Text>no games</Text>
+                    </View>
+                )}
             </ImageBackground>
         </SafeAreaView>
     );

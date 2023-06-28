@@ -1,13 +1,22 @@
-import React, { useEffect } from "react";
-import { StyleSheet, View, ImageBackground, SafeAreaView, Image, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+    StyleSheet,
+    View,
+    ImageBackground,
+    SafeAreaView,
+    Image,
+    TouchableOpacity,
+    ActivityIndicator,
+} from "react-native";
 import { Button, Text } from "react-native-paper";
 import userService from "../services/userService";
 
 import { colors } from "../colors";
 
 export default function HomeScreen({ navigation }) {
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
-        console.log("Navigation.js: useEffect");
         async function getUserDetails() {
             try {
                 const me = await userService.getUserDetails();
@@ -20,6 +29,8 @@ export default function HomeScreen({ navigation }) {
                 console.log("Navigation.js: useEffect: getUserDetails: error: ", error);
             }
         }
+
+        setLoading(true);
         getUserDetails();
     }, []);
 
@@ -31,51 +42,57 @@ export default function HomeScreen({ navigation }) {
                 blurRadius={2}
                 resizeMode="cover"
             >
-                <View style={styles.logoContainer}>
-                    <Image source={require("../assets/pokerDonkey.png")} style={styles.image} />
-                    <Text style={styles.header}>Poker Donkey</Text>
-                </View>
-                {/* <Text style={styles.header}>Donk Bet App</Text> */}
-                <View style={styles.bottomContainer}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                        <Button
-                            mode="contained"
-                            icon="login"
-                            buttonColor={colors.Complementary}
-                            contentStyle={{ height: 50 }}
-                            labelStyle={{ fontSize: 16 }}
-                            style={styles.button}
-                        >
-                            Login
-                        </Button>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-                        <Button
-                            mode="contained"
-                            icon="account-plus"
-                            buttonColor={colors.Background}
-                            onPress={() => navigation.navigate("SignUp")}
-                            contentStyle={{ height: 50 }}
-                            labelStyle={{ fontSize: 16 }}
-                            style={styles.button}
-                        >
-                            Create an account
-                        </Button>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={console.log("about")}>
-                        <Button
-                            mode="contained"
-                            icon="information"
-                            buttonColor={colors.Accent}
-                            onPress={console.log("about")}
-                            contentStyle={{ height: 50 }}
-                            labelStyle={{ fontSize: 16 }}
-                            style={styles.button}
-                        >
-                            Take A Tour
-                        </Button>
-                    </TouchableOpacity>
-                </View>
+                {loading ? (
+                    <ActivityIndicator size="large" color={colors.Accent} />
+                ) : (
+                    <>
+                        <View style={styles.logoContainer}>
+                            <Image source={require("../assets/pokerDonkey.png")} style={styles.image} />
+                            <Text style={styles.header}>Poker Donkey</Text>
+                        </View>
+                        {/* <Text style={styles.header}>Donk Bet App</Text> */}
+                        <View style={styles.bottomContainer}>
+                            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                                <Button
+                                    mode="contained"
+                                    icon="login"
+                                    buttonColor={colors.Complementary}
+                                    contentStyle={{ height: 50 }}
+                                    labelStyle={{ fontSize: 16 }}
+                                    style={styles.button}
+                                >
+                                    Login
+                                </Button>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+                                <Button
+                                    mode="contained"
+                                    icon="account-plus"
+                                    buttonColor={colors.Background}
+                                    onPress={() => navigation.navigate("SignUp")}
+                                    contentStyle={{ height: 50 }}
+                                    labelStyle={{ fontSize: 16 }}
+                                    style={styles.button}
+                                >
+                                    Create an account
+                                </Button>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={console.log("about")}>
+                                <Button
+                                    mode="contained"
+                                    icon="information"
+                                    buttonColor={colors.Accent}
+                                    onPress={console.log("about")}
+                                    contentStyle={{ height: 50 }}
+                                    labelStyle={{ fontSize: 16 }}
+                                    style={styles.button}
+                                >
+                                    Take A Tour
+                                </Button>
+                            </TouchableOpacity>
+                        </View>
+                    </>
+                )}
             </ImageBackground>
         </SafeAreaView>
     );
