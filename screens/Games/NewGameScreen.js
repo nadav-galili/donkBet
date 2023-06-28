@@ -8,13 +8,15 @@ import AppLogo from "../../components/AppLogo";
 import UserAvatar from "../../components/UserAvatar";
 import GameInfo from "./GameInfo";
 import PlayerAvatar from "../../components/PlayerAvatar";
+import BuyInsDetails from "./BuyInsDetails";
 import gameService from "../../services/gameService";
 
 const NewGame = () => {
     const route = useRoute();
-    const [gamesData, setGamesData] = useState(usersGames);
+    const [gamesData, setGamesData] = useState({});
     const [changedUserBuyIns, setchangedUserBuyIns] = useState(false);
-    const { user, game, leagues, leaguePlayers, GameDetails, usersGames } = route.params;
+    const [gameDetails, setGameDetails] = useState({});
+    const { user, game, leagues, leaguePlayers } = route.params;
 
     useEffect(() => {
         const getUserGames = async () => {
@@ -22,6 +24,9 @@ const NewGame = () => {
                 const { data } = await gameService.getUserGamesByGameId(game.id);
                 console.log("🚀 ~ file: NewGameScreen.js ~ line 29 ~ getUserGames ~ data", data);
                 setGamesData(data);
+                const { data: gameDetails } = await gameService.getGameDetails(game.id);
+                console.log("🚀 ~ file: NewGameScreen.js:26 ~ getUs erGames ~ gameDetails:", gameDetails);
+                setGameDetails(gameDetails);
             } catch (error) {
                 console.log("🚀 ~ f/ile: NewGameScreen.js ~ line 31 ~ getUserGames ~ error", error);
             }
@@ -43,65 +48,67 @@ const NewGame = () => {
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require("../../assets/spaceChips3.png")} style={styles.container}>
                 {gamesData?.userGames?.length > 0 ? (
-                    <FlatList
-                        data={gamesData.userGames}
-                        keyExtractor={(item) => item.id.toString()}
-                        ListHeaderComponent={
-                            <>
-                                <View style={styles.avatar}>
-                                    {user?.nickName && <UserAvatar avatarSource={user.image} />}
-                                </View>
-                                <View style={styles.logoContainer}>
-                                    <AppLogo />
-                                </View>
-                                <GameInfo gameId={game.id} createdAt={game.created_at} updatedAt={game.updated_at} />
-                                <View style={styles.gameHeaders}>
-                                    <Text style={styles.headersText}>Player</Text>
-                                    <Text style={styles.headersText}>+/- Buy-In</Text>
+                    <>
+                        <FlatList
+                            data={gamesData.userGames}
+                            keyExtractor={(item) => item.id.toString()}
+                            ListHeaderComponent={
+                                <>
+                                    <View style={styles.avatar}>
+                                        {user?.nickName && <UserAvatar avatarSource={user.image} />}
+                                    </View>
+                                    <View style={styles.logoContainer}>
+                                        <AppLogo />
+                                    </View>
+                                    <GameInfo
+                                        gameId={game.id}
+                                        createdAt={game.created_at}
+                                        updatedAt={game.updated_at}
+                                    />
+                                    <View style={styles.gameHeaders}>
+                                        <Text style={styles.headersText}>Player</Text>
+                                        <Text style={styles.headersText}>+/- Buy-In</Text>
 
-                                    <Text style={styles.headersText}>Total Buy-Ins</Text>
-                                    <Text style={styles.headersLongText}>Cash Out Player</Text>
-                                    {/* <Text style={styles.headersText}>Profit</Text> */}
+                                        <Text style={styles.headersText}>Total Buy-Ins</Text>
+                                        <Text style={styles.headersLongText}>Cash Out Player</Text>
+                                    </View>
+                                </>
+                            }
+                            renderItem={({ item }) => (
+                                <View style={styles.gameInfoContainer}>
+                                    <PlayerAvatar avatarSource={item?.User?.image} playerName={item?.User?.nickName} />
+                                    <View style={styles.iconContainer}>
+                                        <FontAwesome
+                                            name="money"
+                                            size={25}
+                                            color={colors.green}
+                                            onPress={() =>
+                                                addBuyInToPlayer(item?.User?.id, game.id, 100, item?.league_id)
+                                            }
+                                        />
+                                        <FontAwesome
+                                            name="times-circle"
+                                            size={22}
+                                            color={"red"}
+                                            onPress={() => console.log(`cancel buy-in for ${item?.User?.nickName}`)}
+                                        />
+                                    </View>
+
+                                    <Text style={styles.gameInfoText}>{item?.buy_ins_amount}</Text>
+
+                                    <Button
+                                        mode="contained"
+                                        labelStyle={{ fontSize: 6.2, color: colors.white }}
+                                        onPress={() => console.log(`cash out for ${item?.User?.nickName}`)}
+                                        style={styles.cashOut}
+                                    >
+                                        cash out
+                                    </Button>
                                 </View>
-                            </>
-                        }
-                        renderItem={({ item }) => (
-                            <View style={styles.gameInfoContainer}>
-                                <PlayerAvatar avatarSource={item?.User?.image} playerName={item?.User?.nickName} />
-                                <FontAwesome
-                                    name="money"
-                                    size={25}
-                                    style={{ marginLeft: 10 }}
-                                    color={colors.green}
-                                    // onPress={() => console.log(`cash in ${item?.User?.nickName}`)}
-                                    onPress={() => addBuyInToPlayer(item?.User?.id, game.id, 100, item?.league_id)}
-                                />
-                                <FontAwesome
-                                    name="times-circle"
-                                    size={22}
-                                    style={{ width: "5%" }}
-                                    color={"red"}
-                                    onPress={() => console.log(`cancel buy-in for ${item?.User?.nickName}`)}
-                                />
-
-                                <Text style={styles.gameInfoText}>{item?.buy_ins_amount}</Text>
-                                {/* <Text style={styles.cas/>hOut}>cash out</Text> */}
-                                <Button
-                                    mode="contained"
-                                    labelStyle={{ fontSize: 6.2, color: colors.white }}
-                                    onPress={() => console.log(`cash out for ${item?.User?.nickName}`)}
-                                    style={styles.cashOut}
-                                >
-                                    cash out
-                                </Button>
-
-                                {/* <TextInput style={styles.cashInHand} keyboardType="numeric">
-                                    {item?.cash_in_hand}
-                                </TextInput> */}
-                                {/* <Text style={styles.gameInfoText}>{item?.profit}</Text> */}
-                            </View>
-                        )}
-                    />
+                            )}
+                        />
+                        <BuyInsDetails gameDetails={gameDetails} />
+                    </>
                 ) : (
                     <View>
                         <Text>no games</Text>
@@ -130,49 +137,42 @@ const styles = StyleSheet.create({
     },
     cashOut: {
         color: colors.darkPurple,
-
-        // fontWeight: "bold",
         width: "22%",
     },
     container: {
         flex: 1,
-        // backgroundColor: colors.white,
+        // paddingBottom: 20,
     },
     gameHeaders: {
         flexDirection: "row-reverse",
         justifyContent: "space-around",
         marginTop: 20,
         paddingVertical: 10,
-        // marginBottom: 10,
-
-        // padding: 10,
         backgroundColor: colors.Accent,
     },
     gameInfoContainer: {
         flexDirection: "row-reverse",
         justifyContent: "space-around",
-        // marginHorizontal: 5,
-        paddingVertical: 10,
-        // paddingLeft: 10,
+        paddingVertical: 5,
         alignItems: "center",
         backgroundColor: colors.white,
         borderBottomWidth: 1,
         borderBottomColor: colors.darkPurple,
     },
     gameInfoText: {
-        fontSize: 10,
+        fontSize: 13,
         fontWeight: "bold",
-        // width: "15%",
     },
     headersText: {
         color: colors.white,
         fontSize: 12,
-        // marginRight: 10,
+
         fontWeight: "bold",
     },
     headersLongText: {
         color: colors.white,
-        fontSize: 7,
+        fontSize: 11,
+        alignSelf: "center",
         width: "15%",
         fontWeight: "bold",
     },
@@ -180,6 +180,11 @@ const styles = StyleSheet.create({
     logoContainer: {
         alignItems: "center",
         justifyContent: "center",
+    },
+    iconContainer: {
+        flexDirection: "row-reverse",
+        justifyContent: "space-around",
+        width: "20%",
     },
 });
 

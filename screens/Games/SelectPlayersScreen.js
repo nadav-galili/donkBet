@@ -20,8 +20,8 @@ const SelectPlayersScreen = () => {
 
     const openNewGame = async () => {
         const { data } = await gameService.newGame(selected, leagues, leaguePlayers);
-        const { GameDetails, game, usersGames } = data;
-        navigation.navigate("NewGame", { game, user, leagues, leaguePlayers, selected, GameDetails, usersGames });
+        const { GameDetails, game } = data;
+        navigation.navigate("NewGame", { game, user, leagues, leaguePlayers, selected, GameDetails });
     };
 
     const windowWidth = Dimensions.get("window").width;

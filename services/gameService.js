@@ -13,8 +13,13 @@ export function getUserGamesByGameId(gameId) {
     return http.get(`${SERVER_URL}/api/games/getUserGamesByGameId/${gameId}`);
 }
 
+export function getGameDetails(gameId) {
+    return http.get(`${SERVER_URL}/api/games/getGameDetails/${gameId}`);
+}
+
 export default {
     newGame,
     addBuyInToPlayer,
     getUserGamesByGameId,
+    getGameDetails,
 };
