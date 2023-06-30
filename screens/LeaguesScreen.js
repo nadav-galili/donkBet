@@ -42,8 +42,8 @@ const LeagueScreen = () => {
     };
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground source={require("../assets/spaceChips1.png")} style={styles.container} blurRadius={0}>
-                <ScrollView>
+            <ImageBackground source={require("../assets/spaceChips1.png")} style={styles.container}>
+                <ScrollView style={styles.overlay}>
                     <View style={styles.avatar}>{user?.nickName && <UserAvatar avatarSource={user.image} />}</View>
                     <View style={styles.logoContainer}>
                         <AppLogo />
@@ -114,13 +114,14 @@ const LeagueScreen = () => {
 
                                 <AppButton
                                     icon="chart-bar"
-                                    color={colors.Accent}
+                                    color={colors.primary}
                                     width="70%"
                                     text="League Statistics"
                                     onPress={() => console.log("league stats clicked")}
                                 />
                                 <AppButton
-                                    color={colors.Complementary}
+                                    color={colors.LightGreen}
+                                    textColor={colors.Accent}
                                     width="70%"
                                     text="Start A New Game"
                                     onPress={() =>
@@ -156,13 +157,9 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: colors.white,
     },
     headerContainer: {
         alignItems: "center",
-        borderBottomColor: colors.white,
-        borderBottomWidth: 3,
-        backgroundColor: colors.white,
         marginTop: 20,
     },
     joinButtons: {
@@ -202,16 +199,21 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginTop: 20,
     },
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: "rgba(0, 0, 0, 0.5)", // Adjust the opacity as desired
+    },
     playersContainer: {
         flexDirection: "row",
-        justifyContent: "space-evenly",
-        width: "100%",
+        justifyContent: "space-around",
+        flexWrap: "wrap",
+        marginTop: 10,
+        maxWidth: "90%",
     },
     singlePlayer: {
         textAlign: "center",
         fontSize: 12,
         marginTop: 5, // add some margin to the top
-        // marginHorizontal: 15, // add some margin to the right and left
     },
     share: {
         flexDirection: "row",

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, FlatList, StyleSheet, Text } from "react-native";
+import { colors } from "../../colors";
 
 function BuyInsDetails({ gameDetails }) {
+    console.log("🚀 ~ file: BuyInsDetails.js:5 ~ BuyInsDetails ~ gameDetails:", gameDetails);
     const getRowBackgroundColor = (index) => {
-        return index % 2 === 0 ? "white" : "grey";
+        return index % 2 === 0 ? "white" : colors.LightBlue;
     };
 
     return (
@@ -41,11 +43,11 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     header: {
-        fontSize: 20,
+        fontSize: 25,
         fontWeight: "bold",
         textAlign: "center",
         marginBottom: 10,
-        color: "white",
+        color: colors.white,
         textDecorationLine: "underline",
     },
     row: {
