@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ImageBackground, View, StyleSheet, FlatList, Text, SafeAreaView, ScrollView } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, ActivityIndicator } from "react-native-paper";
 import PromptModal from "../common/PromptModal";
 import CashOutModal from "../common/CashOutModal";
 import { useRoute } from "@react-navigation/native";
@@ -13,6 +13,7 @@ import PlayerAvatar from "../../components/PlayerAvatar";
 import BuyInsDetails from "./BuyInsDetails";
 import gameService from "../../services/gameService";
 import Toast from "react-native-toast-message";
+import { useNavigation } from "@react-navigation/native";
 
 const NewGame = () => {
     const route = useRoute();
@@ -23,7 +24,9 @@ const NewGame = () => {
     const [selectedPlayer, setSelectedPlayer] = useState(null);
     const [cashOuts, setCashOuts] = useState(null);
     const [cashedOutPlayers, setCashedOutPlayers] = useState([]);
+    const [loading, setLoading] = useState(false);
     const { user, game, leagues, leaguePlayers } = route.params;
+    const navigation = useNavigation();
 
     useEffect(() => {
         const getUserGames = async () => {
@@ -42,6 +45,7 @@ const NewGame = () => {
     const addBuyInToPlayer = async (playerId, gameId, buyInAmount, leagueId, nickName) => {
         try {
             setIsPromptVisible(true);
+            setLoading(true);
             const { data } = await gameService.addBuyInToPlayer(playerId, gameId, buyInAmount, leagueId);
             setIsPromptVisible(false);
             setchangedUserBuyIns(!changedUserBuyIns);
@@ -54,6 +58,7 @@ const NewGame = () => {
                 topOffset: 30,
                 bottomOffset: 40,
             });
+            setLoading(false);
         } catch (error) {
             console.log("🚀 ~ file: NewGameScreen.js ~ line 57 ~ addBuyInToPlayer ~ error", error);
         }
@@ -72,13 +77,14 @@ const NewGame = () => {
             });
             return;
         }
-
+        setLoading(true);
         await gameService.cashOutPlayer(cashOuts.User.id, game.id, cashOutAmount);
         setCashOuts(null);
         if (cashedOutPlayers.includes(cashOuts.User.id)) return;
         setCashedOutPlayers([...cashedOutPlayers, cashOuts.User.id]);
         setIsPromptVisible(false);
         setchangedUserBuyIns(!changedUserBuyIns);
+        setLoading(false);
     };
 
     const endGame = (gameId) => async () => {
@@ -93,6 +99,7 @@ const NewGame = () => {
                 topOffset: 30,
                 bottomOffset: 40,
             });
+            navigation.navigate("MyLeagues", { screen: "LeagueTab" });
         } catch (error) {
             console.log("🚀 ~ file: NewGameScreen.js ~ line 57 ~ addBuyInToPlayer ~ error", error);
         }
@@ -102,6 +109,7 @@ const NewGame = () => {
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require("../../assets/spaceChips.png")} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
+                    {loading && <ActivityIndicator size="large" color={colors.white} />}
                     {gamesData?.userGames?.length > 0 ? (
                         <>
                             <FlatList

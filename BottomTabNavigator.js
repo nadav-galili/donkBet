@@ -4,6 +4,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import LeaguesScreen from "./screens/LeaguesScreen";
 import PersonalStatsScreen from "./screens/PersonalStatsScreen";
 import SettingsScreen from "./screens/SettingsScreen";
+import { Ionicons } from "@expo/vector-icons";
+console.log("🚀 ~ file: BottomTabNavigator.js:8 ~ Ionicons:", Ionicons);
 import LeaguesRegistrationScreen from "./screens/Leagues/LeaguesRegistrationScreen";
 
 // import any other screens you want in the bottom navigation
@@ -26,13 +28,31 @@ const Stack = createStackNavigator();
 function BottomTabNavigator() {
     return (
         <BottomTab.Navigator>
-            <BottomTab.Screen name="LeagueTab" component={LeaguesScreen} options={{ headerShown: false }} />
+            <BottomTab.Screen
+                name="LeagueTab"
+                component={LeaguesScreen}
+                options={{
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => <Ionicons name="ios-trophy" size={size} color={color} />,
+                }}
+            />
             <BottomTab.Screen
                 name="PersonalStatsTab"
                 component={PersonalStatsScreen}
-                options={{ headerShown: false }}
+                options={{
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => <Ionicons name="ios-analytics" size={size} color={color} />,
+                }}
             />
-            <BottomTab.Screen name="SettingsTab" component={SettingsScreen} options={{ headerShown: false }} />
+            <BottomTab.Screen
+                name="SettingsTab"
+                component={SettingsScreen}
+                options={{
+                    headerShown: false,
+
+                    tabBarIcon: ({ color, size }) => <Ionicons name="ios-settings" size={size} color={color} />,
+                }}
+            />
             {/* Add a BottomTab.Screen for each of the other screens you want in the bottom navigation */}
         </BottomTab.Navigator>
     );
