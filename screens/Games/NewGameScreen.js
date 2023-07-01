@@ -22,7 +22,7 @@ const NewGame = () => {
     const [isPromptVisible, setIsPromptVisible] = useState(false);
     const [selectedPlayer, setSelectedPlayer] = useState(null);
     const [cashOuts, setCashOuts] = useState(null);
-    console.log("🚀 ~ file: NewGameScreen.js:25 ~ NewGame ~ cashOuts:", cashOuts);
+    const [cashedOutPlayers, setCashedOutPlayers] = useState([]);
     const { user, game, leagues, leaguePlayers } = route.params;
 
     useEffect(() => {
@@ -31,7 +31,6 @@ const NewGame = () => {
                 const { data } = await gameService.getUserGamesByGameId(game.id);
                 setGamesData(data);
                 const { data: gameDetails } = await gameService.getGameDetails(game.id);
-                // console.log("🚀 ~ file: NewGameScreen.js:27 ~ getUserGames ~ gameDetails:", gameDetails);
                 setGameDetails(gameDetails);
             } catch (error) {
                 console.log("🚀 ~ f/ile: NewGameScreen.js ~ line 31 ~ getUserGames ~ error", error);
@@ -60,13 +59,48 @@ const NewGame = () => {
         }
     };
     const handleCashOut = async (cashOutAmount) => {
+        if (!cashOutAmount || cashOutAmount < 0) {
+            Toast.show({
+                type: "error",
+                position: "top",
+
+                text1: `Please enter a valid amount`,
+                visibilityTime: 3000,
+                autoHide: true,
+                topOffset: 30,
+                bottomOffset: 40,
+            });
+            return;
+        }
+
         await gameService.cashOutPlayer(cashOuts.User.id, game.id, cashOutAmount);
         setCashOuts(null);
+        if (cashedOutPlayers.includes(cashOuts.User.id)) return;
+        setCashedOutPlayers([...cashedOutPlayers, cashOuts.User.id]);
         setIsPromptVisible(false);
+        setchangedUserBuyIns(!changedUserBuyIns);
     };
+
+    const endGame = (gameId) => async () => {
+        try {
+            await gameService.endGame(gameId);
+            Toast.show({
+                type: "success",
+                position: "top",
+                text1: `Game number ${gameId} ended successfully`,
+                visibilityTime: 3000,
+                autoHide: true,
+                topOffset: 30,
+                bottomOffset: 40,
+            });
+        } catch (error) {
+            console.log("🚀 ~ file: NewGameScreen.js ~ line 57 ~ addBuyInToPlayer ~ error", error);
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground source={require("../../assets/spaceChips3.png")} style={styles.container}>
+            <ImageBackground source={require("../../assets/spaceChips.png")} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     {gamesData?.userGames?.length > 0 ? (
                         <>
@@ -80,12 +114,29 @@ const NewGame = () => {
                                         </View>
                                         <View style={styles.logoContainer}>
                                             <AppLogo />
+
+                                            {gamesData?.userGames.length == cashedOutPlayers.length && (
+                                                <Button
+                                                    mode="contained"
+                                                    labelStyle={{ fontSize: 20, color: colors.white }}
+                                                    disabled={gamesData?.userGames.length != cashedOutPlayers.length}
+                                                    onPress={endGame(game.id)}
+                                                    style={styles.endGameButton}
+                                                    disabledStyle={{ backgroundColor: "red" }}
+                                                >
+                                                    End Game
+                                                </Button>
+                                            )}
+                                            <Text style={{ color: colors.white }}>
+                                                * You can end the game only after cashing out all the players
+                                            </Text>
                                         </View>
                                         <GameInfo
                                             gameId={game.id}
                                             createdAt={game.created_at}
                                             updatedAt={game.updated_at}
                                         />
+
                                         <View style={styles.gameHeaders}>
                                             <Text style={styles.headersText}>Player</Text>
                                             <Text style={styles.headersText}>+/- Buy-In</Text>
@@ -101,40 +152,54 @@ const NewGame = () => {
                                             avatarSource={item?.User?.image}
                                             playerName={item?.User?.nickName}
                                         />
-                                        <View style={styles.iconContainer}>
-                                            <FontAwesome
-                                                name="money"
-                                                size={25}
-                                                color={colors.green}
-                                                onPress={() => {
-                                                    setIsPromptVisible(true);
-                                                    setSelectedPlayer(item);
-                                                }}
-                                            />
-                                            <FontAwesome
-                                                name="times-circle"
-                                                size={22}
-                                                color={"red"}
-                                                onPress={() => console.log(`cancel buy-in for ${item?.User?.nickName}`)}
-                                            />
-                                        </View>
+                                        {cashedOutPlayers.includes(item?.User?.id) && (
+                                            <>
+                                                <Text>Buy-Ins:{item.buy_ins_amount}</Text>
+                                                <Text>Profit:{item.profit}</Text>
+                                                <Text style={styles.buyInText}>Cashed Out</Text>
+                                            </>
+                                        )}
 
-                                        <Text style={styles.gameInfoText}>{item?.buy_ins_amount}</Text>
+                                        {!cashedOutPlayers.includes(item?.User?.id) && (
+                                            <>
+                                                <View style={styles.iconContainer}>
+                                                    <FontAwesome
+                                                        name="money"
+                                                        size={25}
+                                                        color={colors.green}
+                                                        onPress={() => {
+                                                            setIsPromptVisible(true);
+                                                            setSelectedPlayer(item);
+                                                        }}
+                                                    />
+                                                    <FontAwesome
+                                                        name="times-circle"
+                                                        size={22}
+                                                        color={"red"}
+                                                        onPress={() =>
+                                                            console.log(`cancel buy-in for ${item?.User?.nickName}`)
+                                                        }
+                                                    />
+                                                </View>
+                                                <Text style={styles.gameInfoText}>{item?.buy_ins_amount}</Text>
 
-                                        <Button
-                                            mode="contained"
-                                            labelStyle={{ fontSize: 9, color: colors.white }}
-                                            onPress={() => {
-                                                setIsPromptVisible(true);
-                                                setCashOuts(item);
-                                            }}
-                                            style={styles.cashOut}
-                                        >
-                                            Cash Out
-                                        </Button>
+                                                <Button
+                                                    mode="contained"
+                                                    labelStyle={{ fontSize: 9, color: colors.white }}
+                                                    onPress={() => {
+                                                        setIsPromptVisible(true);
+                                                        setCashOuts(item);
+                                                    }}
+                                                    style={styles.cashOut}
+                                                >
+                                                    Cash Out
+                                                </Button>
+                                            </>
+                                        )}
                                     </View>
                                 )}
                             />
+
                             <BuyInsDetails gameDetails={gameDetails} />
                             {selectedPlayer && (
                                 <PromptModal
@@ -218,7 +283,6 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        // paddingBottom: 20,
     },
     gameHeaders: {
         flexDirection: "row-reverse",
@@ -245,7 +309,6 @@ const styles = StyleSheet.create({
     headersText: {
         color: colors.white,
         fontSize: 12,
-
         fontWeight: "bold",
     },
     headersLongText: {
@@ -254,6 +317,17 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         width: "15%",
         fontWeight: "bold",
+    },
+    endGameButton: {
+        width: 200,
+        height: 50,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 10,
+        borderColor: colors.Accent,
+        borderWidth: 2,
+        marginVertical: 10,
+        backgroundColor: colors.green,
     },
 
     logoContainer: {

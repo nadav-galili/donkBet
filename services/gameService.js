@@ -22,10 +22,16 @@ export function cashOutPlayer(userId, gameId, cashOutAmount) {
     return http.put(`${SERVER_URL}/api/games/cashOutPlayer`, { userId, gameId, cashOutAmount });
 }
 
+export function endGame(gameId) {
+    console.log("🚀 ~ file: gameService.js:26 ~ endGame ~ gameId:", gameId);
+    return http.put(`${SERVER_URL}/api/games/endGame`, { gameId });
+}
+
 export default {
     newGame,
     addBuyInToPlayer,
     getUserGamesByGameId,
     getGameDetails,
     cashOutPlayer,
+    endGame,
 };

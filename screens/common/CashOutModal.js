@@ -18,6 +18,10 @@ const CashOutModal = ({
     const [cashOnHand, setCashOnHand] = useState("");
 
     const handleCashOnHandChange = (value) => {
+        if (value === "") {
+            setCashOnHand("");
+            return;
+        }
         setCashOnHand(value);
     };
 
