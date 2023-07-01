@@ -3,7 +3,6 @@ import { View, FlatList, StyleSheet, Text } from "react-native";
 import { colors } from "../../colors";
 
 function BuyInsDetails({ gameDetails }) {
-    console.log("🚀 ~ file: BuyInsDetails.js:5 ~ BuyInsDetails ~ gameDetails:", gameDetails);
     const getRowBackgroundColor = (index) => {
         return index % 2 === 0 ? "white" : colors.LightBlue;
     };

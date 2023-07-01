@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ImageBackground, View, StyleSheet, FlatList, Text, SafeAreaView, ScrollView } from "react-native";
 import { Button } from "react-native-paper";
+import PromptModal from "../common/PromptModal";
 import { useRoute } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { colors } from "../../colors";
@@ -16,6 +17,8 @@ const NewGame = () => {
     const [gamesData, setGamesData] = useState({});
     const [changedUserBuyIns, setchangedUserBuyIns] = useState(false);
     const [gameDetails, setGameDetails] = useState({});
+    const [isPromptVisible, setIsPromptVisible] = useState(false);
+    const [selectedPlayer, setSelectedPlayer] = useState(null);
     const { user, game, leagues, leaguePlayers } = route.params;
 
     useEffect(() => {
@@ -24,7 +27,7 @@ const NewGame = () => {
                 const { data } = await gameService.getUserGamesByGameId(game.id);
                 setGamesData(data);
                 const { data: gameDetails } = await gameService.getGameDetails(game.id);
-                console.log("🚀 ~ file: NewGameScreen.js:27 ~ getUserGames ~ gameDetails:", gameDetails);
+                // console.log("🚀 ~ file: NewGameScreen.js:27 ~ getUserGames ~ gameDetails:", gameDetails);
                 setGameDetails(gameDetails);
             } catch (error) {
                 console.log("🚀 ~ f/ile: NewGameScreen.js ~ line 31 ~ getUserGames ~ error", error);
@@ -35,8 +38,9 @@ const NewGame = () => {
 
     const addBuyInToPlayer = async (playerId, gameId, buyInAmount, leagueId) => {
         try {
+            setIsPromptVisible(true);
             const { data } = await gameService.addBuyInToPlayer(playerId, gameId, buyInAmount, leagueId);
-            console.log("🚀 ~ file: NewGameScreen.js:39 ~ addBuyInToPlayer ~ data:", data);
+            setIsPromptVisible(false);
             setchangedUserBuyIns(!changedUserBuyIns);
         } catch (error) {
             console.log("🚀 ~ file: NewGameScreen.js ~ line 57 ~ addBuyInToPlayer ~ error", error);
@@ -85,9 +89,10 @@ const NewGame = () => {
                                                 name="money"
                                                 size={25}
                                                 color={colors.green}
-                                                onPress={() =>
-                                                    addBuyInToPlayer(item?.User?.id, game.id, 100, item?.league_id)
-                                                }
+                                                onPress={() => {
+                                                    setIsPromptVisible(true);
+                                                    setSelectedPlayer(item);
+                                                }}
                                             />
                                             <FontAwesome
                                                 name="times-circle"
@@ -105,12 +110,44 @@ const NewGame = () => {
                                             onPress={() => console.log(`cash out for ${item?.User?.nickName}`)}
                                             style={styles.cashOut}
                                         >
-                                            cash out
+                                            Cash Out
                                         </Button>
                                     </View>
                                 )}
                             />
                             <BuyInsDetails gameDetails={gameDetails} />
+                            {selectedPlayer && (
+                                <PromptModal
+                                    isVisible={isPromptVisible}
+                                    onClose={(() => setSelectedPlayer(null), () => setIsPromptVisible(false))}
+                                    imageUrl={selectedPlayer?.User?.image}
+                                    headerText={`Add Buy-In to ${selectedPlayer?.User?.nickName}?`}
+                                    buttonTexts={["Add 50", "Add 100", "Cancel"]}
+                                    buttonColors={[colors.Complementary, colors.blue, "red"]}
+                                    buttonActions={[
+                                        () =>
+                                            addBuyInToPlayer(
+                                                selectedPlayer?.User?.id,
+                                                game.id,
+                                                50,
+                                                selectedPlayer?.league_id
+                                            ),
+                                        () => {
+                                            setIsPromptVisible(true);
+                                            addBuyInToPlayer(
+                                                selectedPlayer?.User?.id,
+                                                game.id,
+                                                100,
+                                                selectedPlayer?.league_id
+                                            );
+                                        },
+                                        () => {
+                                            setSelectedPlayer(null);
+                                            setIsPromptVisible(false);
+                                        },
+                                    ]}
+                                />
+                            )}
                         </>
                     ) : (
                         <View>
