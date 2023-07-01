@@ -17,9 +17,15 @@ export function getGameDetails(gameId) {
     return http.get(`${SERVER_URL}/api/games/getGameDetails/${gameId}`);
 }
 
+export function cashOutPlayer(userId, gameId, cashOutAmount) {
+    cashOutAmount = parseInt(cashOutAmount);
+    return http.put(`${SERVER_URL}/api/games/cashOutPlayer`, { userId, gameId, cashOutAmount });
+}
+
 export default {
     newGame,
     addBuyInToPlayer,
     getUserGamesByGameId,
     getGameDetails,
+    cashOutPlayer,
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ImageBackground, View, StyleSheet, FlatList, Text, SafeAreaView, ScrollView } from "react-native";
 import { Button } from "react-native-paper";
 import PromptModal from "../common/PromptModal";
+import CashOutModal from "../common/CashOutModal";
 import { useRoute } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { colors } from "../../colors";
@@ -11,6 +12,7 @@ import GameInfo from "./GameInfo";
 import PlayerAvatar from "../../components/PlayerAvatar";
 import BuyInsDetails from "./BuyInsDetails";
 import gameService from "../../services/gameService";
+import Toast from "react-native-toast-message";
 
 const NewGame = () => {
     const route = useRoute();
@@ -19,6 +21,8 @@ const NewGame = () => {
     const [gameDetails, setGameDetails] = useState({});
     const [isPromptVisible, setIsPromptVisible] = useState(false);
     const [selectedPlayer, setSelectedPlayer] = useState(null);
+    const [cashOuts, setCashOuts] = useState(null);
+    console.log("🚀 ~ file: NewGameScreen.js:25 ~ NewGame ~ cashOuts:", cashOuts);
     const { user, game, leagues, leaguePlayers } = route.params;
 
     useEffect(() => {
@@ -36,17 +40,30 @@ const NewGame = () => {
         getUserGames();
     }, [changedUserBuyIns]);
 
-    const addBuyInToPlayer = async (playerId, gameId, buyInAmount, leagueId) => {
+    const addBuyInToPlayer = async (playerId, gameId, buyInAmount, leagueId, nickName) => {
         try {
             setIsPromptVisible(true);
             const { data } = await gameService.addBuyInToPlayer(playerId, gameId, buyInAmount, leagueId);
             setIsPromptVisible(false);
             setchangedUserBuyIns(!changedUserBuyIns);
+            Toast.show({
+                type: "success",
+                position: "top",
+                text1: `Buy-In of ${buyInAmount} added to ${nickName}`,
+                visibilityTime: 3000,
+                autoHide: true,
+                topOffset: 30,
+                bottomOffset: 40,
+            });
         } catch (error) {
             console.log("🚀 ~ file: NewGameScreen.js ~ line 57 ~ addBuyInToPlayer ~ error", error);
         }
     };
-
+    const handleCashOut = async (cashOutAmount) => {
+        await gameService.cashOutPlayer(cashOuts.User.id, game.id, cashOutAmount);
+        setCashOuts(null);
+        setIsPromptVisible(false);
+    };
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require("../../assets/spaceChips3.png")} style={styles.container}>
@@ -107,7 +124,10 @@ const NewGame = () => {
                                         <Button
                                             mode="contained"
                                             labelStyle={{ fontSize: 9, color: colors.white }}
-                                            onPress={() => console.log(`cash out for ${item?.User?.nickName}`)}
+                                            onPress={() => {
+                                                setIsPromptVisible(true);
+                                                setCashOuts(item);
+                                            }}
                                             style={styles.cashOut}
                                         >
                                             Cash Out
@@ -130,15 +150,16 @@ const NewGame = () => {
                                                 selectedPlayer?.User?.id,
                                                 game.id,
                                                 50,
-                                                selectedPlayer?.league_id
+                                                selectedPlayer?.league_id,
+                                                selectedPlayer?.User?.nickName
                                             ),
                                         () => {
-                                            setIsPromptVisible(true);
                                             addBuyInToPlayer(
                                                 selectedPlayer?.User?.id,
                                                 game.id,
                                                 100,
-                                                selectedPlayer?.league_id
+                                                selectedPlayer?.league_id,
+                                                selectedPlayer?.User?.nickName
                                             );
                                         },
                                         () => {
@@ -146,6 +167,21 @@ const NewGame = () => {
                                             setIsPromptVisible(false);
                                         },
                                     ]}
+                                />
+                            )}
+                            {cashOuts && (
+                                <CashOutModal
+                                    isVisible={isPromptVisible && cashOuts !== null}
+                                    onClose={() => {
+                                        setCashOuts(null);
+                                        setIsPromptVisible(false);
+                                    }}
+                                    imageUrl={cashOuts?.User?.image}
+                                    headerText={`Cash Out ${cashOuts?.User?.nickName}?`}
+                                    totalBuyIns={cashOuts?.buy_ins_amount}
+                                    buttonTexts={[`Cash ${cashOuts?.User?.nickName} out`, "Cancel"]}
+                                    buttonColors={[colors.green, "red"]}
+                                    onCashOut={(cashOutAmount) => handleCashOut(cashOutAmount)}
                                 />
                             )}
                         </>
