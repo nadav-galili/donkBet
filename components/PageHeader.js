@@ -1,27 +1,24 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Text } from "react-native-paper";
 
-const PageHeader = ({ text, color }) => {
+const PageHeader = ({ text, color, variant }) => {
     return (
         <View style={styles.container}>
-            <Text style={[styles.text, { color }]}>{text}</Text>
+            <Text variant={variant} style={[styles.text, { color }]}>
+                {text}
+            </Text>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        // height: 60,
-        // justifyContent: "center",
-        // justifyContent: "flex-start",
-        // alignItems: "center",
-    },
     text: {
-        fontSize: 38,
-        fontWeight: "bold",
         color: "white",
-        textAlign: "center",
         textDecorationLine: "underline",
+        fontSize: 30,
+        fontWeight: "bold",
+        fontFamily: "serif",
     },
 });
 

@@ -64,7 +64,6 @@ const SignUpScreen = ({ navigation }) => {
             const res = await userService.signUp(formData);
 
             if (res?.data?.error) {
-                console.log("🚀 ~ file: SignUpScreen.js:56 ~ handleSubmit ~ error:", res);
                 setError(res.data.error);
                 return;
             }
@@ -83,11 +82,10 @@ const SignUpScreen = ({ navigation }) => {
                 Toast.show({
                     topOffset: 60,
                     type: "error",
-                    text1: "This nickname already exists",
+                    text1: "This nick name already exists",
                     text2: "Please choose a different nickname",
                 });
             }
-            console.log("🚀 ~ file: SignUpScreen.js90 ~ handleSubmit ~ error", error);
         } finally {
             setLoading(false);
         }
@@ -95,7 +93,7 @@ const SignUpScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.ImageBack}>
-            <ImageBackground source={require("../assets/liquid-cheese.png")} style={styles.ImageBack}>
+            <ImageBackground source={require("../assets/spaceChips.png")} style={styles.ImageBack} blurRadius={2}>
                 <View style={styles.container}>
                     <Text style={styles.title}>Create A New Account</Text>
                     {error && <Text style={styles.error}>{error}</Text>}

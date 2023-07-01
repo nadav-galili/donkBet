@@ -25,4 +25,5 @@ export const colors = {
     DarkGreen: "#134611",
     MediumGreen: "#3AAE47",
     LightGreen: "#9BEF93",
+    lightPink: "#ff70e4",
 };
