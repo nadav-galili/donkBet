@@ -42,39 +42,39 @@ const LeagueScreen = () => {
     };
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground source={require("../assets/spaceChips1.png")} style={styles.container}>
+            <ImageBackground source={require("../assets/blue_chip2.png")} style={styles.container}>
                 <ScrollView style={styles.overlay}>
                     <View style={styles.avatar}>{user?.nickName && <UserAvatar avatarSource={user.image} />}</View>
                     <View style={styles.logoContainer}>
                         <AppLogo />
                     </View>
                     <View style={styles.joinButtons}>
-                        <Button
+                        <AppButton
                             mode="outlined"
                             textColor={colors.Accent}
                             onPress={() => navigation.navigate("LeaguesRegistration", { user })}
-                            style={styles.button2}
-                            labelStyle={{ fontSize: 7 }}
-                        >
-                            +Create New League
-                        </Button>
-                        <Button
-                            mode="contained"
-                            textColor={colors.white}
+                            icon="chart-bar"
+                            color={colors.white}
+                            width="40%"
+                            text="+Create A League"
+                       />
+                            <AppButton
+                            mode="outlined"
+                            textColor={colors.Accent}
                             onPress={() => navigation.navigate("JoinLeagues", { user })}
-                            style={styles.button1}
-                            labelStyle={{ fontSize: 9 }}
-                        >
-                            Join A League
-                        </Button>
+                            icon="chart-bar"
+                            color={colors.LightGreen}
+                            width="40%"
+                            text="Join A League"
+                       />
                     </View>
                     <View style={styles.headerContainer}>
-                        <PageHeader text="My Leagues" color={colors.lightPink} />
+                        <PageHeader text="My Leagues" color={colors.white} />
                     </View>
                     {Array.isArray(leagues) && leagues.length < 1 && (
                         <View style={styles.noLeagues}>
-                            <Text variant="titleLarge">No leagues yet...</Text>
-                            <Text variant="titleLarge">join Or create a lague</Text>
+                            <Text style={styles.noLeagues}>No leagues yet...</Text>
+                            <Text style={styles.noLeagues}>join Or create a lague</Text>
                         </View>
                     )}
                     <View style={styles.leaguesContainer}>
@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
+
     },
     headerContainer: {
         alignItems: "center",
@@ -198,6 +199,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 20,
+        color: colors.white,
+        fontSize: 20,
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,

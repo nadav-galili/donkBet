@@ -19,7 +19,9 @@ export default function HomeScreen({ navigation }) {
     useEffect(() => {
         async function getUserDetails() {
             try {
+                navigation.navigate("SignUp");
                 const me = await userService.getUserDetails();
+                console.log("🚀 ~ file: HomeScreen.js:23 ~ getUserDetails ~ me:", me)
 
                 if (me.data) {
                     //navigate to myleagues
@@ -27,6 +29,7 @@ export default function HomeScreen({ navigation }) {
                 }
             } catch (error) {
                 console.log("Navigation.js: useEffect: getUserDetails: error: ", error);
+                console.error('Error details: ', error.response.data);
             }
         }
 

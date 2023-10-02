@@ -59,6 +59,11 @@ const SignUpScreen = ({ navigation }) => {
                     type: "image/jpeg",
                 });
             }
+            //check if nickname has spaces
+            if (values.nickname.includes(" ")) {
+                setError("Nickname cannot contain spaces");
+                return;
+            }
             formData.append("password", values.password);
             formData.append("nickName", values.nickname);
             const res = await userService.signUp(formData);
@@ -93,7 +98,7 @@ const SignUpScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.ImageBack}>
-            <ImageBackground source={require("../assets/spaceChips.png")} style={styles.ImageBack} blurRadius={2}>
+            <ImageBackground source={require("../assets/big_purple_poker_chip2.png")} style={styles.ImageBack} blurRadius={6}>
                 <View style={styles.container}>
                     <Text style={styles.title}>Create A New Account</Text>
                     {error && <Text style={styles.error}>{error}</Text>}
@@ -102,7 +107,7 @@ const SignUpScreen = ({ navigation }) => {
                         <Formik initialValues={formikState} onSubmit={handleSubmit} validationSchema={validationSchema}>
                             {({ handleChange, handleSubmit, errors, setFieldTouched, touched }) => (
                                 <>
-                                    <Text style={styles.label}>Nick Name</Text>
+                                    {/* <Text style={styles.label}>Nick Name</Text> */}
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Nick Name"
@@ -114,8 +119,8 @@ const SignUpScreen = ({ navigation }) => {
                                     {touched.nickname && errors.nickname && (
                                         <Text style={styles.error}>{errors.nickname}</Text>
                                     )}
-                                    <Text style={styles.comment}>you can change your nick name later</Text>
-                                    <Text style={styles.label}>Password</Text>
+                                    <Text style={styles.change}>you can change your nick name later</Text>
+                                    {/* <Text style={styles.label}>Password</Text> */}
 
                                     <TextInput
                                         style={styles.input}
@@ -129,6 +134,8 @@ const SignUpScreen = ({ navigation }) => {
                                     {touched.password && errors.password && (
                                         <Text style={styles.error}>{errors.password}</Text>
                                     )}
+                                      <AppButton color={colors.blue} width="80%" text="Upload Image" onPress={handleImagePicker} />
+                        <Text style={styles.comment}>you can upload/edit your image later</Text>
                                     <AppButton
                                         color={colors.green}
                                         width="80%"
@@ -140,8 +147,7 @@ const SignUpScreen = ({ navigation }) => {
                                 </>
                             )}
                         </Formik>
-                        <AppButton color={colors.green} width="80%" text="Upload Image" onPress={handleImagePicker} />
-                        <Text style={styles.comment}>you can upload/edit your image later</Text>
+                      
                     </View>
                 </View>
             </ImageBackground>
@@ -154,14 +160,21 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
+    change: {
+        fontSize: 14,
+        color: colors.white,
+        marginBottom: 10,
+    },
     comment: {
         fontSize: 12,
+        color: colors.white,
     },
     error: {
-        fontSize: 10,
+        fontSize: 15,
         color: "red",
         backgroundColor: "#fff",
         marginVertical: 10,
+        padding: 5,
     },
     ImageBack: {
         flex: 1,
@@ -179,8 +192,11 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: "bold",
         marginBottom: 40,
-        color: colors.white,
+        color: colors.purple,
         alignSelf: "center",
+        backgroundColor: colors.white,
+        padding: 10,
+        borderRadius: 10,
     },
     label: {
         fontSize: 18,

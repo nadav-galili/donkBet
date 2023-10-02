@@ -6,6 +6,7 @@ const http = axios.create();
 
 http.interceptors.request.use(async (config) => {
     const token = await AsyncStorage.getItem("token");
+    console.log("🚀 ~ file: httpService.js:9 ~ http.interceptors.request.use ~ token:", token)
     if (token) {
         config.headers["x-auth-token"] = token;
     }

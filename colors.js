@@ -10,6 +10,7 @@ export const colors = {
     yellow: "#ffce4b",
     blue: "#007bff",
     green: "#13dd2e",
+    lightPurple: "#d8b3ff",
 
     Primary: "#D83A56",
     Secondary: "#FF616D",
@@ -26,4 +27,6 @@ export const colors = {
     MediumGreen: "#3AAE47",
     LightGreen: "#9BEF93",
     lightPink: "#ff70e4",
+
+    
 };
