@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { View, Dimensions, StyleSheet, Text, SafeAreaView, ScrollView, ImageBackground } from "react-native";
-
 import { useRoute, useNavigation } from "@react-navigation/native";
-import Carousel from "react-native-snap-carousel";
-
 import UserAvatar from "../../components/UserAvatar";
 import AppLogo from "../../components/AppLogo";
 import PageHeader from "../../components/PageHeader";
@@ -24,7 +21,6 @@ const SelectPlayersScreen = () => {
         navigation.navigate("NewGame", { game, user, leagues, leaguePlayers, selected, GameDetails });
     };
 
-    const windowWidth = Dimensions.get("window").width;
     const handlePlayerSelection = (playerId) => {
         setSelected((prevSelected) => {
             if (prevSelected.includes(playerId)) {
@@ -39,7 +35,7 @@ const SelectPlayersScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground source={require("../../assets/spaceChips3.png")} style={styles.container} blurRadius={0}>
+            <ImageBackground source={require("../../assets/purple_chip_white.png")} style={styles.container} blurRadius={0}>
                 <ScrollView>
                     <View style={styles.avatar}>{user?.nickName && <UserAvatar avatarSource={user.image} />}</View>
                     <View style={styles.logoContainer}>
@@ -59,21 +55,17 @@ const SelectPlayersScreen = () => {
                             <Text>Continue To Game</Text>
                         </Button>
                     </View>
-
-                    <View style={styles.carouselContainer}>
-                        <Carousel
-                            layout={"default"}
-                            data={leaguePlayers}
-                            sliderWidth={windowWidth}
-                            itemWidth={windowWidth - 250} // or whatever size you want the cards to be
-                            renderItem={({ item: player }) => (
+                    {/* render playerCard */}
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
+                        {leaguePlayers.map((player) => (
+                            <View style={styles.playerCardContainer} key={player?.User?.id}>
                                 <PlayerCard
                                     player={player}
                                     selected={selected.includes(player?.User?.id)}
                                     onSelect={handlePlayerSelection}
                                 />
-                            )}
-                        />
+                            </View>
+                        ))}
                     </View>
                 </ScrollView>
             </ImageBackground>
@@ -92,20 +84,10 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         marginVertical: 20,
     },
-    container: {
-        flex: 1,
-    },
-
     avatar: {
         alignItems: "flex-end",
         marginTop: 30,
         marginRight: 20,
-    },
-    carouselContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 40,
     },
 
     headerContainer: {
@@ -117,17 +99,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginTop: 20,
     },
-    contentContainer: {
-        paddingVertical: 20,
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "center",
-    },
     playerCardContainer: {
-        // width: "20%",
-        // paddingHorizontal: 10,
-        // marginBottom: 20,
+        marginVertical: 20,
+        alignItems: "center", 
+        width: "33.3%",
     },
+    wrapper: {
+        height: 400,
+    },
+
 });
 
 export default SelectPlayersScreen;
