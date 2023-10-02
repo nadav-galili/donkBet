@@ -107,7 +107,7 @@ const NewGame = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground source={require("../../assets/spaceChips.png")} style={styles.container}>
+            <ImageBackground source={require("../../assets/gold_chip.png")} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     {loading && <ActivityIndicator size="large" color={colors.white} />}
                     {gamesData?.userGames?.length > 0 ? (
