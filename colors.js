@@ -1,5 +1,4 @@
-import LinearGradient from "react-native-linear-gradient";
-
+// Desc: This file contains all the colors used in the app
 export const colors = {
     primary: "#3498db",
     secondary: "#2ecc71",
@@ -28,6 +27,7 @@ export const colors = {
     MediumGreen: "#3AAE47",
     LightGreen: "#9BEF93",
     lightPink: "#ff70e4",
+    gold: "#ffd700",
 
     
 };

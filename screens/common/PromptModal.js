@@ -2,8 +2,10 @@ import React from "react";
 import { View, Text, Image, Button } from "react-native";
 import Modal from "react-native-modal";
 import { SERVER_URL } from "../../config";
+import { colors} from "../../colors";
+import { Input } from "react-native-elements";
 
-const PromptModal = ({ isVisible, onClose, imageUrl, headerText, buttonTexts, buttonColors, buttonActions }) => {
+const PromptModal = ({ isVisible, onClose, imageUrl, headerText, buttonTexts, buttonColors, buttonActions, selectedPlayerData,onCashOut }) => {
     return (
         <Modal isVisible={isVisible} onBackdropPress={onClose}>
             <View style={styles.container}>
@@ -15,13 +17,16 @@ const PromptModal = ({ isVisible, onClose, imageUrl, headerText, buttonTexts, bu
                         <Button key={index} title={text} onPress={buttonActions[index]} color={buttonColors[index]} />
                     ))}
                 </View>
-                <Text>Cash Out Player</Text>
+                <Text style={styles.cashOuTitle}>Cash Out Player ?</Text>
                 <View style={styles.cashOutContainer}>
-                    <Text>Total Buy Ins</Text>
+                    <Text>Total Buy Ins - {selectedPlayerData?.buy_ins_amount}</Text>
+                    <View style={styles.cashInHandContainer}>
                     <Text>Cash In Hand Amount</Text>
+                    <Input keyboardType="numeric" style={styles.cashInHandInput}/>
+                    </View>
                     <Text>Profit</Text>
                 </View>
-                <Button title="Save" onPress={onClose} />
+                <Button title="Save Cash Out Data" onPress={onCashOut} />
             </View>
         </Modal>
     );
@@ -40,12 +45,34 @@ const styles = {
         width: "100%",
         flexWrap:"wrap",
     },
-    cashOutContainer: {
+    cashInHandContainer:{
         flexDirection: "row-reverse",
-        justifyContent: "space-around",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "50%",
+    },
+    cashInHandInput:{
+        width: "50%",
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
+        textAlign:"center",
+        margin:5,
+    },
+    cashOutContainer: {
+        flexDirection: "column",
+        justifyContent: "center",
         alignItems: "center",
         width: "100%",
-        flexWrap:"wrap",
+    },
+    cashOuTitle: {
+        fontSize: 15,
+        fontWeight: "bold",
+        color: colors.purple,
+        marginTop: 60,
+        textAlign: "center",
+        textDecorationLine: "underline",
     },
     closeButton: {
         position: "absolute",

@@ -22,6 +22,7 @@ const NewGame = () => {
     const [gameDetails, setGameDetails] = useState({});
     const [isPromptVisible, setIsPromptVisible] = useState(false);
     const [selectedPlayer, setSelectedPlayer] = useState(null);
+    // console.log("🚀 ~ file: NewGameScreen.js:25 ~ NewGame ~ selectedPlayer:", selectedPlayer?.buy_ins_amount)
     const [cashOuts, setCashOuts] = useState(null);
     const [cashedOutPlayers, setCashedOutPlayers] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -87,26 +88,28 @@ const NewGame = () => {
         }
     };
     const handleCashOut = async (cashOutAmount) => {
-        if (!cashOutAmount || cashOutAmount < 0) {
-            Toast.show({
-                type: "error",
-                position: "top",
-                text1: `Please enter a valid amount`,
-                visibilityTime: 3000,
-                autoHide: true,
-                topOffset: 30,
-                bottomOffset: 40,
-            });
-            return;
-        }
-        setLoading(true);
-        await gameService.cashOutPlayer(cashOuts.User.id, game.id, cashOutAmount);
-        setCashOuts(null);
-        if (cashedOutPlayers.includes(cashOuts.User.id)) return;
-        setCashedOutPlayers([...cashedOutPlayers, cashOuts.User.id]);
-        setIsPromptVisible(false);
-        setchangedUserBuyIns(!changedUserBuyIns);
-        setLoading(false);
+        console.log("🚀 ~ file: NewGameScreen.js:90 ~ handleCashOut ~ cashOutAmount:", cashOutAmount)
+        
+        // if (!cashOutAmount || cashOutAmount < 0) {
+        //     Toast.show({
+        //         type: "error",
+        //         position: "top",
+        //         text1: `Please enter a valid amount`,
+        //         visibilityTime: 3000,
+        //         autoHide: true,
+        //         topOffset: 30,
+        //         bottomOffset: 40,
+        //     });
+        //     return;
+        // }
+        // setLoading(true);
+        // await gameService.cashOutPlayer(cashOuts.User.id, game.id, cashOutAmount);
+        // setCashOuts(null);
+        // if (cashedOutPlayers.includes(cashOuts.User.id)) return;
+        // setCashedOutPlayers([...cashedOutPlayers, cashOuts.User.id]);
+        // setIsPromptVisible(false);
+        // setchangedUserBuyIns(!changedUserBuyIns);
+        // setLoading(false);
     };
 
     const endGame = (gameId) => async () => {
@@ -238,7 +241,7 @@ const NewGame = () => {
                                     onClose={(() => setSelectedPlayer(null), () => setIsPromptVisible(false))}
                                     imageUrl={selectedPlayer?.User?.image}
                                     headerText={`Add Buy-In to ${selectedPlayer?.User?.nickName}`}
-                                    buttonTexts={["Add 50", "Add 100", "Cancel Last Buy-In"]}
+                                    buttonTexts={["Add 50", "Add 100", "Delete Last Buy-In"]}
                                     buttonColors={[colors.Complementary, colors.blue, colors.orange]}
                                     buttonActions={[
                                         () =>
@@ -261,8 +264,9 @@ const NewGame = () => {
                                         () => {
                                            cancelLastBuyIn(selectedPlayer?.User?.id, game.id, selectedPlayer?.league_id, selectedPlayer?.User?.nickName);
                                         },
-                                        
                                     ]}
+                                    selectedPlayerData={selectedPlayer}
+                                    onCashOut={() => handleCashOut(9)}
                                 />
                             )}
                             {cashOuts && (
