@@ -9,6 +9,10 @@ export function addBuyInToPlayer(playerId, gameId, buyInAmount, leagueId) {
     return http.post(`${SERVER_URL}/api/games/addBuyInToPlayer`, { playerId, gameId, buyInAmount, leagueId });
 }
 
+export function cancelLastBuyIn(playerId, gameId, leagueId){
+    console.log("🚀 ~ file: gameService.js:26 ~ cancelLastBuyIn ~ playerId, gameId, leagueId", playerId, gameId, leagueId)
+}
+
 export function getUserGamesByGameId(gameId) {
     return http.get(`${SERVER_URL}/api/games/getUserGamesByGameId/${gameId}`);
 }
@@ -30,6 +34,7 @@ export function endGame(gameId) {
 export default {
     newGame,
     addBuyInToPlayer,
+    cancelLastBuyIn,
     getUserGamesByGameId,
     getGameDetails,
     cashOutPlayer,

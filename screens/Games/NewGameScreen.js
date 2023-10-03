@@ -63,12 +63,34 @@ const NewGame = () => {
             console.log("🚀 ~ file: NewGameScreen.js ~ line 57 ~ addBuyInToPlayer ~ error", error);
         }
     };
+
+    const cancelLastBuyIn = async (playerId, gameId, leagueId, nickName) => {
+        try {
+            setIsPromptVisible(true);
+            setLoading(true);
+            // const { data } = await gameService.cancelLastBuyIn(playerId, gameId, leagueId);
+            await gameService.cancelLastBuyIn(playerId, gameId, leagueId);
+            setIsPromptVisible(false);
+            setchangedUserBuyIns(!changedUserBuyIns);
+            Toast.show({
+                type: "info",
+                position: "top",
+                text1: `Last Buy-In canceled for ${nickName}`,
+                visibilityTime: 3000,
+                autoHide: true,
+                topOffset: 30,
+                bottomOffset: 40,
+            });
+            setLoading(false);
+        } catch (error) {
+            console.log("🚀 ~ file: NewGameScreen.js ~ line 57 ~ addBuyInToPlayer ~ error", error);
+        }
+    };
     const handleCashOut = async (cashOutAmount) => {
         if (!cashOutAmount || cashOutAmount < 0) {
             Toast.show({
                 type: "error",
                 position: "top",
-
                 text1: `Please enter a valid amount`,
                 visibilityTime: 3000,
                 autoHide: true,
@@ -115,6 +137,7 @@ const NewGame = () => {
                             <FlatList
                                 data={gamesData.userGames}
                                 keyExtractor={(item) => item.id.toString()}
+                                scrollEnabled={false}
                                 ListHeaderComponent={
                                     <>
                                         <View style={styles.avatar}>
@@ -135,9 +158,7 @@ const NewGame = () => {
                                                     End Game
                                                 </Button>
                                             )}
-                                            <Text style={{ color: colors.white }}>
-                                                * You can end the game only after cashing out all the players
-                                            </Text>
+                                           
                                         </View>
                                         <GameInfo
                                             gameId={game.id}
@@ -147,10 +168,11 @@ const NewGame = () => {
 
                                         <View style={styles.gameHeaders}>
                                             <Text style={styles.headersText}>Player</Text>
-                                            <Text style={styles.headersText}>+/- Buy-In</Text>
-
+                                            {/* <Text style={styles.headersText}>+/- Buy-In</Text> */}
+                                            <Text style={styles.headersText}>Action</Text>
                                             <Text style={styles.headersText}>Total Buy-Ins</Text>
-                                            <Text style={styles.headersLongText}>Cash Out Player</Text>
+                                            <Text style={styles.headersText}>Profit</Text>
+                                            {/* <Text style={styles.headersLongText}>Cash Out Player</Text> */}
                                         </View>
                                     </>
                                 }
@@ -164,7 +186,7 @@ const NewGame = () => {
                                             <>
                                                 <Text>Buy-Ins:{item.buy_ins_amount}</Text>
                                                 <Text>Profit:{item.profit}</Text>
-                                                <Text style={styles.buyInText}>Cashed Out</Text>
+                                                {/* <Text style={styles.buyInText}>Cashed Out</Text> */}
                                             </>
                                         )}
 
@@ -180,18 +202,19 @@ const NewGame = () => {
                                                             setSelectedPlayer(item);
                                                         }}
                                                     />
-                                                    <FontAwesome
+                                                    {/* <FontAwesome
                                                         name="times-circle"
                                                         size={22}
                                                         color={"red"}
                                                         onPress={() =>
                                                             console.log(`cancel buy-in for ${item?.User?.nickName}`)
                                                         }
-                                                    />
+                                                    /> */}
                                                 </View>
                                                 <Text style={styles.gameInfoText}>{item?.buy_ins_amount}</Text>
+                                                <Text style={styles.gameInfoText}>{item?.profit}</Text>
 
-                                                <Button
+                                                {/* <Button
                                                     mode="contained"
                                                     labelStyle={{ fontSize: 9, color: colors.white }}
                                                     onPress={() => {
@@ -201,7 +224,7 @@ const NewGame = () => {
                                                     style={styles.cashOut}
                                                 >
                                                     Cash Out
-                                                </Button>
+                                                </Button> */}
                                             </>
                                         )}
                                     </View>
@@ -214,9 +237,9 @@ const NewGame = () => {
                                     isVisible={isPromptVisible}
                                     onClose={(() => setSelectedPlayer(null), () => setIsPromptVisible(false))}
                                     imageUrl={selectedPlayer?.User?.image}
-                                    headerText={`Add Buy-In to ${selectedPlayer?.User?.nickName}?`}
-                                    buttonTexts={["Add 50", "Add 100", "Cancel"]}
-                                    buttonColors={[colors.Complementary, colors.blue, "red"]}
+                                    headerText={`Add Buy-In to ${selectedPlayer?.User?.nickName}`}
+                                    buttonTexts={["Add 50", "Add 100", "Cancel Last Buy-In"]}
+                                    buttonColors={[colors.Complementary, colors.blue, colors.orange]}
                                     buttonActions={[
                                         () =>
                                             addBuyInToPlayer(
@@ -236,9 +259,9 @@ const NewGame = () => {
                                             );
                                         },
                                         () => {
-                                            setSelectedPlayer(null);
-                                            setIsPromptVisible(false);
+                                           cancelLastBuyIn(selectedPlayer?.User?.id, game.id, selectedPlayer?.league_id, selectedPlayer?.User?.nickName);
                                         },
+                                        
                                     ]}
                                 />
                             )}
@@ -343,9 +366,10 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     iconContainer: {
-        flexDirection: "row-reverse",
-        justifyContent: "space-around",
-        width: "20%",
+        // flexDirection: "row-reverse",
+        // justifyContent: "space-around",
+        // width: "30%",
+
     },
     scrollContainer: {
         flexGrow: 1,

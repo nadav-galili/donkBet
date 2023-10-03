@@ -60,10 +60,10 @@ const LeagueScreen = () => {
                        />
                             <AppButton
                             mode="outlined"
-                            textColor={colors.Accent}
+                            textColor={colors.white}
                             onPress={() => navigation.navigate("JoinLeagues", { user })}
                             icon="chart-bar"
-                            color={colors.LightGreen}
+                            color={colors.Accent}
                             width="40%"
                             text="Join A League"
                        />
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     leagueName: {
         fontSize: 20,
         fontWeight: "bold",
-        color: colors.MediumBlue,
+        color: colors.Accent,
         textTransform: "capitalize",
         textDecorationLine: "underline",
     },

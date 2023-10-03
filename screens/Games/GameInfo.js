@@ -12,7 +12,6 @@ const GameInfo = ({ gameId, createdAt, updatedAt }) => {
         minute: "2-digit",
         second: "2-digit",
         hour12: false,
-        timeZone: "UTC",
     });
 
     const endDate = new Date(updatedAt).toLocaleTimeString("en-GB", {
@@ -20,11 +19,13 @@ const GameInfo = ({ gameId, createdAt, updatedAt }) => {
         minute: "2-digit",
         second: "2-digit",
         hour12: false,
-        timeZone: "UTC",
     });
 
     return (
         <View style={styles.headerContainer}>
+             <Text style={{ color: colors.black }}>
+                                                * You can end the game only after cashing out all the players
+                                            </Text>
             <PageHeader text={`Game Id: ${gameId}`} color={colors.darkPurple} />
             <View style={styles.datesContainer}>
                 <Text style={styles.date}>Started At: {startDate}</Text>

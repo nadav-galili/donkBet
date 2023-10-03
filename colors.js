@@ -11,6 +11,7 @@ export const colors = {
     blue: "#007bff",
     green: "#13dd2e",
     lightPurple: "#d8b3ff",
+    orange: "#ff5c00",
 
     Primary: "#D83A56",
     Secondary: "#FF616D",
